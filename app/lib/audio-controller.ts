@@ -132,13 +132,6 @@ export class AudioController {
             this.fullScript +=
                 (this.fullScript ? " " : "") + result.enhancedText;
 
-            console.log(
-                `✓ Transcribed: "${result.originalText.substring(0, 50)}..."`
-            );
-            console.log(
-                `✓ Enhanced: "${result.enhancedText.substring(0, 50)}..."`
-            );
-
             // Convert base64 audio back to Blob
             const audioBytes = Uint8Array.from(atob(result.audioBase64), (c) =>
                 c.charCodeAt(0)

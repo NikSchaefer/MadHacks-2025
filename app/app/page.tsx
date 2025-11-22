@@ -2,22 +2,24 @@
 
 import { Button } from "@/components/ui/button";
 import { AudioController } from "@/lib/audio-controller";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DEFAULT_CONFIG } from "@/lib/config";
 
 export default function Home() {
-    const controller = new AudioController(DEFAULT_CONFIG);
-    const isListening = controller.getIsRecording();
+    const [controller] = useState(() => new AudioController(DEFAULT_CONFIG));
+    const [isListening, setIsListening] = useState(false);
     const [statusMessage, setStatusMessage] = useState("");
 
     function toggleListening() {
-        if (controller.getIsRecording()) {
+        if (isListening) {
             controller.stopRecording();
+            setIsListening(false);
             setStatusMessage("Stopped");
             return;
         }
         controller.startRecording();
+        setIsListening(true);
         setStatusMessage("Listening...");
     }
 

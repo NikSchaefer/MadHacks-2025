@@ -37,7 +37,11 @@ export async function processTextToScript(text: string) {
             throw new Error("No text provided");
         }
 
-        const enhancedText = await textToScript(text);
+        const enhancedText = await textToScript({
+            previousText: "",
+            newText: text,
+            previousScript: "",
+        });
 
         return { success: true, enhancedText };
     } catch (error) {
@@ -88,6 +92,7 @@ export async function processTextToSpeech(text: string) {
 export async function processFullPipeline(formData: FormData) {
     try {
         console.log("=== Starting Full Pipeline ===");
+        const startTime = Date.now();
 
         // Step 1: Audio → Text
         console.log("Step 1: Audio → Text");
@@ -100,6 +105,7 @@ export async function processFullPipeline(formData: FormData) {
         if (!text) {
             return { success: false, error: "No text provided" };
         }
+        console.log(`Step 1 completed in ${Date.now() - startTime}ms`);
 
         // Step 2: Text → Enhanced Script
         console.log("Step 2: Text → Enhanced Script");
@@ -115,13 +121,13 @@ export async function processFullPipeline(formData: FormData) {
 
         // Step 3: Enhanced Script → Speech
         console.log("Step 3: Enhanced Script → Speech");
-        const speechResult = await processTextToSpeech(enhancedText);
+        const speechResult = await processTextToSpeech(text);
         if (!speechResult.success) {
             console.error("Step 3 failed:", speechResult.error);
             return { success: false, error: speechResult.error };
         }
 
-        console.log("=== Pipeline Complete ===");
+        console.log(`Step 3 completed in ${Date.now() - startTime}ms`);
 
         return {
             success: true,
