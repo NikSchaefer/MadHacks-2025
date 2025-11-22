@@ -38,6 +38,7 @@ export interface SpeechChunk {
 export interface ProcessingQueue {
     chunks: AudioChunk[];
     segments: TextSegment[];
+    speechChunks: SpeechChunk[];
     currentIndex: number; // which chunk is being processed
 }
 
