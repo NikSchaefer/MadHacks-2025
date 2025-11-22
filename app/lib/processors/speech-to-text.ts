@@ -6,12 +6,13 @@ export async function speechToText(audio: Blob) {
         const file = new File([audio], "audio.webm", { type: audio.type });
 
         // English transcription
-        const text = await fishAudio.speechToText.convert({
+        const result = await fishAudio.speechToText.convert({
             audio: file,
             language: "en",
         });
 
-        return text;
+        // Extract just the text string for serialization
+        return { text: typeof result === 'string' ? result : result.text };
     } catch (error) {
         console.error("Error in speechToText:", error);
         throw error;

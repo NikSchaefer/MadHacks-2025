@@ -10,11 +10,11 @@ export async function textToScript({
     newText: string;
     previousScript: string;
 }) {
-    if (!newText || !previousScript) {
-        throw new Error("Missing required parameters");
+    if (!newText) {
+        throw new Error("Missing new text");
     }
 
-    return await generateText({
+    const result = await generateText({
         model: google("gemini-2.5-flash"),
         prompt: `You are a real-time lecture enhancement AI. You're processing a LIVE lecture stream, continuously transforming raw transcription into polished educational content that flows naturally as one continuous narrative.
 
@@ -57,4 +57,6 @@ CRITICAL:
 
 Return the next segment of polished lecture script:`,
     });
+
+    return result.text;
 }

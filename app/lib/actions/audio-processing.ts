@@ -121,7 +121,7 @@ export async function processFullPipeline(formData: FormData) {
 
         // Step 3: Enhanced Script → Speech
         console.log("Step 3: Enhanced Script → Speech");
-        const speechResult = await processTextToSpeech(text);
+        const speechResult = await processTextToSpeech(enhancedText);
         if (!speechResult.success) {
             console.error("Step 3 failed:", speechResult.error);
             return { success: false, error: speechResult.error };
