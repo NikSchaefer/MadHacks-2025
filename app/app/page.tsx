@@ -10,6 +10,18 @@ export default function Home() {
     const [controller] = useState(() => new AudioController(DEFAULT_CONFIG));
     const [isListening, setIsListening] = useState(false);
     const [statusMessage, setStatusMessage] = useState("");
+    const [transcript, setTranscript] = useState("");
+    const [script, setScript] = useState("");
+
+    // Poll for transcript and script updates
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTranscript(controller.getFullTranscript());
+            setScript(controller.getFullScript());
+        }, 100); // Update every 100ms
+
+        return () => clearInterval(interval);
+    }, [controller]);
 
     function toggleListening() {
         if (isListening) {
@@ -74,12 +86,12 @@ export default function Home() {
                         </CardHeader>
                         <CardContent>
                             <div className="text-muted-foreground whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-y-auto">
-                                {controller.getFullTranscript().length === 0 ? (
+                                {transcript.length === 0 ? (
                                     <span className="text-muted-foreground/50">
                                         Waiting for audio...
                                     </span>
                                 ) : (
-                                    controller.getFullTranscript()
+                                    transcript
                                 )}
                             </div>
                         </CardContent>
@@ -94,12 +106,12 @@ export default function Home() {
                         </CardHeader>
                         <CardContent>
                             <div className="whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-y-auto">
-                                {controller.getFullScript().length === 0 ? (
+                                {script.length === 0 ? (
                                     <span className="text-muted-foreground/50">
                                         Enhanced version will appear here...
                                     </span>
                                 ) : (
-                                    controller.getFullScript()
+                                    script
                                 )}
                             </div>
                         </CardContent>
