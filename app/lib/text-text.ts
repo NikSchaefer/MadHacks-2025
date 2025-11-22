@@ -5,15 +5,16 @@ import path from "path"
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 
-const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY
-console.log(apiKey)
+const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+console.log(apiKey);
 
-async function prompt(textChunk: string) {
+async function prompt(rawText: String) {
     const result = await generateText({
         model: google("gemini-2.5-flash"),
-        prompt: `Given this text, create a better and more concise summary for whatever is being explained: ${textChunk}`,
+        prompt: `Given that this text (${rawText}) is a segment of text from a transcribed lecture,
+            generate a concise and more effective summary of the given topic that is being explained in that text.
+            Make sure that you are building upon and using the text that you have previously generated from the 
+            last transcribed segments of the lecture.` 
     })
-    console.log(result.text)
+    return result.text;
 }
-
-prompt("Linear algebra is basically just really fancy arithmetic with arrows. You take numbers, but then you stretch them into long noodles called vectors, and then you poke those noodles with matrices, which are like extremely strict spreadsheets that insist on multiplying everything whether it makes sense or not.")
