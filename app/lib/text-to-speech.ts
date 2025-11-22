@@ -3,6 +3,9 @@ import { writeFile } from "fs/promises";
 import path from "path";
 import { RealtimeEvents } from "fish-audio";
 
+// export const fishAudio = new FishAudioClient({
+//   apiKey: 5b90babe8a494c43a568bbb1bf0e9890
+// });
 
 export async function textToSpeech(text: string, voiceModelId: string) {
   try {
@@ -22,8 +25,6 @@ export async function textToSpeech(text: string, voiceModelId: string) {
     throw err;
   }
 }
-
-
 
 export interface AudioChunk {
   id: string;
