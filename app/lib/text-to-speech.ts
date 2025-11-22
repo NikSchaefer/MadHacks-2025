@@ -57,7 +57,7 @@ export async function streamChunksToMp3WithMetadata(
   //   format: "mp3",
   // };
 
-  const request = { test: ""};
+  const request = { text: ""};
 
   const connection = await fishAudio.textToSpeech.convertRealtime(
     request,
