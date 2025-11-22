@@ -37,9 +37,9 @@ export default function Home() {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-8">
-            <div className="max-w-6xl w-full space-y-8">
+            <div className="w-full space-y-8">
                 {/* Header */}
-                <div className="text-center space-y-2">
+                <div className="text-left space-y-2">
                     <h1 className="text-4xl font-bold">
                         AI Lecturer Translator
                     </h1>
@@ -49,7 +49,7 @@ export default function Home() {
                 </div>
 
                 {/* Control Button */}
-                <div className="flex justify-center">
+                <div className="flex justify-left">
                     <Button
                         onClick={toggleListening}
                         size="lg"
@@ -64,7 +64,7 @@ export default function Home() {
 
                 {/* Status Indicator */}
                 {isListening && (
-                    <div className="flex flex-col items-center justify-center gap-2">
+                    <div className="flex flex-col items-left gap-2">
                         <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
                             <div className="size-3 bg-green-500 rounded-full animate-pulse" />
                             <span className="font-medium">Listening...</span>
@@ -78,44 +78,48 @@ export default function Home() {
                 )}
 
                 {/* Display Areas */}
-                <div className="grid md:grid-cols-2 gap-6">
-                    {/* Original Text */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Original Lecture</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-muted-foreground whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-y-auto">
-                                {transcript.length === 0 ? (
-                                    <span className="text-muted-foreground/50">
-                                        Waiting for audio...
-                                    </span>
-                                ) : (
-                                    transcript
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
+                <div className="flex">
+                    <div className="w-1/2 flex flex-col gap-6">
+                        {/* Original Text */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Original Lecture</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-muted-foreground whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-y-auto">
+                                    {transcript.length === 0 ? (
+                                        <span className="text-muted-foreground/50">
+                                            Waiting for audio...
+                                        </span>
+                                    ) : (
+                                        transcript
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
 
-                    {/* Translated Text */}
-                    <Card className="border-primary/20 bg-primary/5">
-                        <CardHeader>
-                            <CardTitle className="text-primary">
-                                AI Enhanced Lecture
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-y-auto">
-                                {script.length === 0 ? (
-                                    <span className="text-muted-foreground/50">
-                                        Enhanced version will appear here...
-                                    </span>
-                                ) : (
-                                    script
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
+                        {/* Translated Text */}
+                        <Card className="border-primary/20 bg-primary/5">
+                            <CardHeader>
+                                <CardTitle className="text-primary">
+                                    AI Enhanced Lecture
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-y-auto">
+                                    {script.length === 0 ? (
+                                        <span className="text-muted-foreground/50">
+                                            Enhanced version will appear here...
+                                        </span>
+                                    ) : (
+                                        script
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    <div className="w-1/2"></div>
                 </div>
             </div>
         </div>

@@ -6,6 +6,7 @@ import path from "path"
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 
 const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+console.log(apiKey)
 
 async function prompt(rawText: String) {
     const result = await generateText({
