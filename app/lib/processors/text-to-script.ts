@@ -10,7 +10,7 @@ export async function textToScript(rawText: string) {
             last transcribed segments of the lecture. Have the returned text be created as if it is from the perspective
             of the lecturer themselves, as if the prompt is returning almost just a better version of the lecture snippet.`,
     });
-    console.log(result.text);
+    console.log("Text to script result:", result.text);
     return result.text;
 }
 

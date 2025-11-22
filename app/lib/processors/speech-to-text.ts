@@ -1,13 +1,19 @@
-import { FishAudioClient } from "fish-audio";
+import { fishAudio } from "../fish/fish-auth";
 
 export async function speechToText(audio: Blob) {
-    const fishAudio = new FishAudioClient({ apiKey: process.env.FISH_API_KEY });
+    try {
+        // Convert Blob to File (Fish Audio API expects File object)
+        const file = new File([audio], "audio.webm", { type: audio.type });
 
-    // English transcription
-    const text = await fishAudio.speechToText.convert({
-        audio: audio as File,
-        language: "en",
-    });
+        // English transcription
+        const text = await fishAudio.speechToText.convert({
+            audio: file,
+            language: "en",
+        });
 
-    return text;
+        return text;
+    } catch (error) {
+        console.error("Error in speechToText:", error);
+        throw error;
+    }
 }

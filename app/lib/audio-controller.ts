@@ -1,7 +1,5 @@
-import { speechToText } from "./processors/speech-to-text";
-import { textToSpeech } from "./processors/text-to-speech";
-import { textToScript } from "./processors/text-to-script";
 import { AudioChunk, AudioConfig, SpeechChunk } from "./types";
+import { processFullPipeline } from "./actions/audio-processing";
 
 /**
  * AudioController manages a simplified 2-stage pipeline:
@@ -108,29 +106,49 @@ export class AudioController {
         this.speechChunksBuffer = [];
     }
 
-    private async processStage1(chunk: AudioChunk): Promise<void> {
+    public async processStage1(chunk: AudioChunk): Promise<void> {
         try {
-            // Step 1: Speech → Text
             chunk.status = "transcribing";
-            const { text } = await speechToText(chunk.audioData);
-            this.fullTranscript += (this.fullTranscript ? " " : "") + text;
-            console.log(`✓ Transcribed: "${text.substring(0, 50)}..."`);
 
-            // Step 2: Text → Enhanced Script
-            chunk.status = "translating";
-            const enhancedText = await textToScript(text);
-            this.fullScript += (this.fullScript ? " " : "") + enhancedText;
-            console.log(`✓ Enhanced: "${enhancedText.substring(0, 50)}..."`);
+            // Create FormData with audio blob
+            const formData = new FormData();
+            formData.append("audio", chunk.audioData);
 
-            // Step 3: Enhanced Script → Speech
-            chunk.status = "synthesizing";
-            const audioBuffer = await textToSpeech(enhancedText);
-            const uint8Array = new Uint8Array(audioBuffer);
+            // Call server action for full pipeline: Audio → Text → Script → Speech
+            const result = await processFullPipeline(formData);
+
+            if (
+                !result.success ||
+                !result.originalText ||
+                !result.enhancedText ||
+                !result.audioBase64
+            ) {
+                throw new Error(result.error || "Processing failed");
+            }
+
+            // Update accumulated text for UI
+            this.fullTranscript +=
+                (this.fullTranscript ? " " : "") + result.originalText;
+            this.fullScript +=
+                (this.fullScript ? " " : "") + result.enhancedText;
+
+            console.log(
+                `✓ Transcribed: "${result.originalText.substring(0, 50)}..."`
+            );
+            console.log(
+                `✓ Enhanced: "${result.enhancedText.substring(0, 50)}..."`
+            );
+
+            // Convert base64 audio back to Blob
+            const audioBytes = Uint8Array.from(atob(result.audioBase64), (c) =>
+                c.charCodeAt(0)
+            );
+            const audioBlob = new Blob([audioBytes], { type: "audio/mp3" });
 
             // Push to playback buffer
             this.speechChunksBuffer.push({
                 id: chunk.id,
-                speechData: new Blob([uint8Array], { type: "audio/mp3" }),
+                speechData: audioBlob,
                 timestamp: chunk.timestamp,
                 duration: 0,
                 status: "pending",
