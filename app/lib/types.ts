@@ -27,6 +27,14 @@ export interface TextSegment {
     status: ChunkStatus;
 }
 
+export interface SpeechChunk {
+    id: string; // matches TextSegment.id
+    speechData: Blob;
+    timestamp: number;
+    duration: number; // in milliseconds
+    status: ChunkStatus;
+}
+
 export interface ProcessingQueue {
     chunks: AudioChunk[];
     segments: TextSegment[];

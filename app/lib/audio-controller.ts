@@ -1,21 +1,20 @@
-import { AudioChunk, TextSegment, AudioConfig, ProcessingQueue } from "./types";
+import { AudioChunk, TextSegment, AudioConfig, SpeechChunk } from "./types";
 
 export class AudioController {
     private config: AudioConfig;
     private mediaRecorder: MediaRecorder | null = null;
 
-    private audioChunks: AudioChunk[];
-    private textSegments: TextSegment[];
-
-    private queue: ProcessingQueue;
+    private audioChunksQueue: AudioChunk[];
+    private textSegmentsQueue: TextSegment[];
+    private speechChunksQueue: SpeechChunk[];
 
     private processingInterval: NodeJS.Timeout | null = null;
 
     constructor(config: AudioConfig) {
         this.config = config;
-        this.audioChunks = [];
-        this.textSegments = [];
-        this.queue = { chunks: [], segments: [], currentIndex: 0 };
+        this.audioChunksQueue = [];
+        this.textSegmentsQueue = [];
+        this.speechChunksQueue = [];
     }
 
     private async setupMicrophone(): Promise<MediaStream> {
@@ -39,7 +38,7 @@ export class AudioController {
 
         // Add the audio chunks to the audioChunks array
         this.mediaRecorder.ondataavailable = (e) => {
-            this.audioChunks.push({
+            this.audioChunksQueue.push({
                 id: Date.now().toString(),
                 audioData: e.data,
                 timestamp: Date.now(),
@@ -52,8 +51,10 @@ export class AudioController {
         this.mediaRecorder.start();
 
         // Process the audio chunks at regular intervals
-        this.processingInterval = setInterval(() => {
-            this.processAudioChunk(this.audioChunks[0]);
+        this.processingInterval = setInterval(async () => {
+            const chunk = this.audioChunksQueue.shift();
+            if (!chunk) return;
+            await this.processAudioChunk(chunk);
         }, this.config.chunkDurationMs);
     }
 
@@ -64,8 +65,10 @@ export class AudioController {
             this.mediaRecorder = null;
         }
 
-        // Clear the audioChunks array
-        this.audioChunks = [];
+        // Clear the queues
+        this.audioChunksQueue = [];
+        this.textSegmentsQueue = [];
+        this.speechChunksQueue = [];
 
         // Clear the processing interval
         if (this.processingInterval) {
@@ -74,12 +77,26 @@ export class AudioController {
         }
     }
 
-    // Process the audio chunk
-	async processAudioChunk(chunk: AudioChunk): Promise<void>
-	{
-		
-	}
+    // Process the audio chunk into a text segment
+    async processAudioChunk(chunk: AudioChunk): Promise<void> {
+        try {
+            const text = await speechToText(chunk);
+            this.textSegmentsQueue.push({
+                id: chunk.id,
+                original: text,
+                translated: "",
+                timestamp: chunk.timestamp,
+                status: "pending",
+            });
+        } catch (error) {
+            console.error("Error processing audio chunk:", error);
+            throw error;
+        }
+    }
 
-    // Process the text segment
+    // Process the text segment into a speech chunk
     async processTextSegment(segment: TextSegment): Promise<void> {}
+
+    // Process the speech chunk into a audio chunk
+    async processSpeechChunk(chunk: SpeechChunk): Promise<void> {}
 }
