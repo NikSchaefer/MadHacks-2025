@@ -53,7 +53,7 @@ export default function Home() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-8">
+        <div className="h-screen flex flex-col">
             {/* Slideshow Input */}
             <input
                 type="file"
@@ -63,9 +63,10 @@ export default function Home() {
                 onChange={handleFileChange}
             />
 
-            <div className="w-full space-y-8">
+            <div className=" items-center justify-center p-8 w-full space-y-8">
                 {/* Display Areas */}
                 <div className="flex gap-6">
+
                     <div className="w-1/3 flex flex-col gap-6">
                     {/* Header */}
                         <div className="text-left space-y-2">
@@ -121,7 +122,7 @@ export default function Home() {
                                 <CardTitle>Original Lecture</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-muted-foreground whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-y-auto">
+                                <div className="text-muted-foreground whitespace-pre-wrap min-h-[150px] max-h-[500px] overflow-y-auto">
                                     {transcript.length === 0 ? (
                                         <span className="text-muted-foreground/50">
                                             Waiting for audio...
@@ -141,7 +142,7 @@ export default function Home() {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-y-auto">
+                                <div className="whitespace-pre-wrap min-h-[150px] max-h-[500px] overflow-y-auto">
                                     {script.length === 0 ? (
                                         <span className="text-muted-foreground/50">
                                             Enhanced version will appear here...
