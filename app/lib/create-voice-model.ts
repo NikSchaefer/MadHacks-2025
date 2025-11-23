@@ -5,6 +5,7 @@ const fishAudio = new FishAudioClient({ apiKey: process.env.FISH_API_KEY });
 
 const title = "My Voice Model";
 const audioFile1 = createReadStream("sample1.mp3");
+
 // Optionally add more samples:
 // const audioFile2 = createReadStream("sample2.wav");
 const coverImageFile = createReadStream("cover.png"); // optional

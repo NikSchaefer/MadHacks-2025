@@ -71,7 +71,7 @@ export default function Home() {
                             onClick={toggleListening}
                             size="lg"
                             variant={isListening ? "destructive" : "default"}
-                            className="text-lg px-8 py-6"
+                            className="text-lg px-8 w-1/2 py-6"
                         >
                             {isListening ? "⏹ Stop Listening" : "🎤 Start Listening"}
                         </Button>
@@ -80,7 +80,7 @@ export default function Home() {
                             onClick={uploadSlideshow}
                             size="lg"
                             variant={isUploading ? "destructive" : "default"}
-                            className="text-lg px-8 py-6"
+                            className="text-lg px-8 w-1/2 py-6"
                         >
                             📁 Upload file
                         </Button>
@@ -167,12 +167,12 @@ export default function Home() {
                         </div>
 
                         {/* Control Buttons */}
-                        <div className="flex justify-left gap-6">
+                        <div className="flex justify-left gap-4">
                             <Button
                                 onClick={toggleListening}
                                 size="lg"
                                 variant={isListening ? "destructive" : "default"}
-                                className="text-lg px-8 py-6"
+                                className="text-lg w-1/2 px-8 py-6"
                             >
                                 {isListening ? "⏹ Stop Listening" : "🎤 Start Listening"}
                             </Button>
@@ -181,7 +181,7 @@ export default function Home() {
                                 onClick={uploadSlideshow}
                                 size="lg"
                                 variant={isUploading ? "destructive" : "default"}
-                                className="text-lg px-8 py-6"
+                                className="text-lg w-1/2 px-8 py-6"
                             >
                                 📁 Upload file
                             </Button>
