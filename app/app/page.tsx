@@ -192,8 +192,8 @@ export default function Home() {
                     <Image
                         src="/logo.png"
                         alt="Logo"
-                        width={60}
-                        height={60}
+                        width={70}
+                        height={65}
                         className="rounded-xl shadow-lg"
                     />
                 </div>
