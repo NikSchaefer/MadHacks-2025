@@ -12,6 +12,20 @@ import { AudioController } from "@/lib/audio-controller";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DEFAULT_CONFIG } from "@/lib/config";
+import confetti from "canvas-confetti";
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label";
+
+
+// const VOICES = [
+//     { id: "54e3a85ac9594ffa83264b8a494b901b", name: "SpongeBob" },
+//     { id: "933563129e564b19a115bedd57b7406a", name: "Sarah" },
+//     { id: "cc1d2d26fddf487496c74a7f40c7c871", name: "Mr. Beast" },
+//     { id: "e34c486929524d41b88646b4ac2f382f", name: "Venti" },
+//     { id: "9fad12dc142b429d9396190b0197adb8", name: "E-Girl" },
+//     { id: "0b2e96151d67433d93891f15efc25dbd", name: "Trap-A-Holics" },
+//     { id: "acc8237220d8470985ec9be6c4c480a9", name: "Hatsune Miku" },
+// ];
 import { VOICES } from "@/data/voices";
 
 export default function Home() {
@@ -28,6 +42,9 @@ export default function Home() {
         return URL.createObjectURL(slideshowFile);
     }, [slideshowFile]);
 
+    const [confettiEnabled, setConfettiEnabled] = useState(true);
+
+
     // Poll for transcript and script updates
     useEffect(() => {
         const interval = setInterval(() => {
@@ -43,6 +60,9 @@ export default function Home() {
             controller.stopRecording();
             setIsListening(false);
             setStatusMessage("Stopped");
+
+            explodeConfetti();
+
             return;
         }
         controller.startRecording();
@@ -64,12 +84,24 @@ export default function Home() {
         setStatusMessage(`Selected file: ${file.name}`);
     }
 
+    function explodeConfetti() {
+        if(!confettiEnabled) return;
+        confetti({
+            particleCount: 180,
+            spread: 360,
+            origin: { y: -0.4, x: 0.5 },
+        });
+    }
+
+ 
+
     // --- Conditional layout ---
     if (!slideshowFile) {
         //centered single column layout
         return (
-            <main className="min-h-screen flex flex-col items-center justify-center p-8">
-                <div className="content max-w-6xl w-full space-y-8">
+            
+            <div className="min-h-screen flex flex-col items-center justify-center p-8">
+                <div className="max-w-6xl w-full space-y-8">
                     {/* Header */}
                     <div className="text-center space-y-2">
                         <h1 className="text-4xl font-bold">
@@ -139,7 +171,7 @@ export default function Home() {
                             <CardTitle>Original Lecture</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-muted-foreground whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-y-auto">
+                            <div className="text-muted-foreground wrap min-h-[300px] max-h-[500px] overflow-y-auto">
                                 {transcript.length === 0 ? (
                                     <span className="text-muted-foreground/50">
                                         Waiting for audio...
@@ -179,7 +211,19 @@ export default function Home() {
                     className="hidden"
                     onChange={handleFileChange}
                 />
-            </main>
+
+                <div className="absolute top-4 right-4 flex items-center gap-2">
+                    <Label htmlFor="confetti-switch" className="text-sm font-medium">
+                        🎉
+                    </Label>
+                    <Switch
+                        id="confetti-switch"
+                        checked={confettiEnabled}
+                        onCheckedChange={setConfettiEnabled}
+                    />
+                </div>
+
+            </div>
         );
     } else {
         //two column layout with slideshow on right
@@ -229,7 +273,6 @@ export default function Home() {
                             >
                                 📁 Upload file
                             </Button>
-
                             <Select onValueChange={controller.setPersona}>
                                 <SelectTrigger className="text-lg w-1/2 px-8 py-6">
                                     <SelectValue placeholder="Voice" />
