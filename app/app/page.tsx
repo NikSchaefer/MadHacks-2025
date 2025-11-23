@@ -1,6 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+  } from "@/components/ui/select"
 import { AudioController } from "@/lib/audio-controller";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,14 +19,13 @@ import { DEFAULT_CONFIG } from "@/lib/config";
 // import { useState, useEffect, useRef, useMemo } from "react"; // <--- Add useMemo
 
 const VOICES = [
-    { id: "alloy", name: "Alloy" },
-    { id: "echo", name: "Echo" },
-    { id: "fable", name: "Fable" },
-    { id: "onyx", name: "Onyx" },
-    { id: "nova", name: "Nova" },
-    { id: "shimmer", name: "Shimmer" },
-    { id: "sage", name: "Sage" },
-    { id: "coral", name: "Coral" },
+    { id: "54e3a85ac9594ffa83264b8a494b901b", name: "SpongeBob" },
+    { id: "933563129e564b19a115bedd57b7406a", name: "Sarah" },
+    { id: "cc1d2d26fddf487496c74a7f40c7c871", name: "Mr. Beast" },
+    { id: "e34c486929524d41b88646b4ac2f382f", name: "Venti" },
+    { id: "9fad12dc142b429d9396190b0197adb8", name: "E-Girl" },
+    { id: "0b2e96151d67433d93891f15efc25dbd", name: "Trap-A-Holics" },
+    { id: "acc8237220d8470985ec9be6c4c480a9", name: "Hatsune Miku" },
 ];
 
 
@@ -73,7 +81,7 @@ export default function Home() {
 
         setIsChangingVoice(true);
     }
-    
+
  
     // --- Conditional layout ---
     if (!slideshowFile) {
@@ -109,14 +117,19 @@ export default function Home() {
                         >
                             📁 Upload file
                         </Button>
-                        <Button
-                            onClick={changeVoice}
-                            size="lg"
-                            variant={isChangingVoice ? "destructive" : "default"}
-                            className="text-lg px-8 w-1/6 py-6"
-                        >
-                            🗣️ Change Voice
-                        </Button>
+                        <Select>
+                            <SelectTrigger className="text-lg px-8 w-1/6 py-6">
+                                <SelectValue placeholder="Voice" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {VOICES.map((voice) => (
+                                    <SelectItem key={voice.id} value={voice.id}>
+                                        {voice.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
                     </div>
 
                     {/* Status Indicator */}
@@ -205,19 +218,33 @@ export default function Home() {
                                 onClick={toggleListening}
                                 size="lg"
                                 variant={isListening ? "destructive" : "default"}
-                                className="text-lg w-1/2 px-8 py-6"
+                                className="text-lg w-1/9 px-7 py-6"
                             >
-                                {isListening ? "⏹ Stop Listening" : "🎤 Start Listening"}
+                                {isListening ? "⏹" : "👂"}
                             </Button>
 
                             <Button
                                 onClick={uploadSlideshow}
                                 size="lg"
                                 variant={isUploading ? "destructive" : "default"}
-                                className="text-lg w-1/2 px-8 py-6"
+                                className="text-lg w-1/3 px-8 py-6"
                             >
                                 📁 Upload file
                             </Button>
+
+                                <Select>
+                                <SelectTrigger className="text-lg w-1/2 px-8 py-6">
+                                    <SelectValue placeholder="Voice" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {VOICES.map((voice) => (
+                                        <SelectItem key={voice.id} value={voice.id}>
+                                            {voice.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
                         </div>
 
                         {/* Status Indicator */}
