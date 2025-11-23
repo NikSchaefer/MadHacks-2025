@@ -178,8 +178,10 @@ export default function DebugPage() {
                                 <thead className="text-xs uppercase bg-slate-100 dark:bg-slate-800">
                                     <tr>
                                         <th className="px-4 py-2">ID</th>
-                                        <th className="px-4 py-2">Step</th>
-                                        <th className="px-4 py-2">Duration</th>
+                                        {/* <th className="px-4 py-2">STT</th>
+                                        <th className="px-4 py-2">Enhance</th>
+                                        <th className="px-4 py-2">TTS</th> */}
+                                        <th className="px-4 py-2">Total</th>
                                         <th className="px-4 py-2">Result</th>
                                     </tr>
                                 </thead>
@@ -192,10 +194,16 @@ export default function DebugPage() {
                                             <td className="px-4 py-2 font-mono">
                                                 {m.id}
                                             </td>
-                                            <td className="px-4 py-2">
-                                                {m.step}
+                                            {/* <td className="px-4 py-2">
+                                                {m.sttDuration ? `${m.sttDuration}ms` : '-'}
                                             </td>
                                             <td className="px-4 py-2">
+                                                {m.enhanceDuration ? `${m.enhanceDuration}ms` : '-'}
+                                            </td>
+                                            <td className="px-4 py-2">
+                                                {m.ttsDuration ? `${m.ttsDuration}ms` : '-'}
+                                            </td> */}
+                                            <td className="px-4 py-2 font-bold">
                                                 {m.duration}ms
                                             </td>
                                             <td className="px-4 py-2">
