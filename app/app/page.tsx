@@ -177,7 +177,7 @@ export default function Home() {
                         />
                     </div>
                 </div>
-                <div className="absolute top-2 right-2 flex items-center gap-1">
+                {/* <div className="absolute top-2 right-2 flex items-center gap-1">
                     <Label
                         htmlFor="confetti-switch"
                         className="text-sm font-medium"
@@ -189,13 +189,18 @@ export default function Home() {
                         checked={confettiEnabled}
                         onCheckedChange={setConfettiEnabled}
                     />
-                </div>
-                <div className="absolute top-6 left-6 z-50">
+                    
+                {/* <ConfettiToggle
+                    enabled={confettiEnabled}
+                    onToggle={setConfettiEnabled}
+                /> */}
+                {/* </div> */} 
+                <div className="absolute top-3 left-3 z-50">
                     <Image
                         src="/logo.png"
                         alt="Logo"
-                        width={60}
-                        height={60}
+                        width={70}
+                        height={65}
                         className="rounded-xl shadow-lg"
                     />
                 </div>
