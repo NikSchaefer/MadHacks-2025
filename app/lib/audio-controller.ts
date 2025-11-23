@@ -112,8 +112,14 @@ export class AudioController {
         return this.player.getBufferLength();
     }
 
-    public markDemoMode() {
-        this.player.markDemoMode();
+    public setAudioMode(mode: "original" | "ai") {
+        this.player.setMode(mode);
+        this.log(`Audio mode switched to: ${mode}`);
+    }
+
+    public async playBackgroundAudio(blob: Blob) {
+        this.log("Starting background audio (original lecture)...");
+        await this.player.startBackground(blob);
     }
 
     // Getters for UI

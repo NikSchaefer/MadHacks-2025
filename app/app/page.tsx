@@ -112,10 +112,7 @@ export default function Home() {
                         onReset={handleReset}
                     />
 
-                    <StatusIndicator
-                        isListening={isListening}
-                        statusMessage={statusMessage}
-                    />
+                    {/* Removed StatusIndicator as it was redundant with button state */}
 
                     <TranscriptCards transcript={transcript} script={script} />
                 </div>

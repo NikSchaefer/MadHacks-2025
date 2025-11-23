@@ -1,6 +1,6 @@
 export function WaveBackground() {
     return (
-        <div className="relative w-full pointer-events-none -mt-48 grow flex flex-col justify-end">
+        <div className="relative w-full pointer-events-none -mt-56 grow flex flex-col justify-end">
             <svg
                 id="visual"
                 viewBox="0 0 900 200"
