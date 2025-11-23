@@ -2,16 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import { AudioController } from "@/lib/audio-controller";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DEFAULT_CONFIG } from "@/lib/config";
 
 export default function Home() {
     const [controller] = useState(() => new AudioController(DEFAULT_CONFIG));
     const [isListening, setIsListening] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const [statusMessage, setStatusMessage] = useState("");
     const [transcript, setTranscript] = useState("");
     const [script, setScript] = useState("");
+    const [slideshowFile, setSlideshowFile] = useState<File | null>(null); // store file
+    const fileInputRef = useRef<HTMLInputElement>(null); // ref for hidden input
 
     // Poll for transcript and script updates
     useEffect(() => {
@@ -35,8 +38,31 @@ export default function Home() {
         setStatusMessage("Listening...");
     }
 
+    function uploadSlideshow() {
+        if (fileInputRef.current) {
+            fileInputRef.current.click(); // open file dialog
+        }
+    }
+
+    function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setSlideshowFile(file); // store uploaded file
+        setIsUploading(true);
+        setStatusMessage(`Selected file: ${file.name}`);
+    }
+
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-8">
+            {/* Slideshow Input */}
+            <input
+                type="file"
+                accept=".pdf"
+                ref={fileInputRef}
+                className="hidden"
+                onChange={handleFileChange}
+            />
+
             <div className="w-full space-y-8">
                 {/* Header */}
                 <div className="text-left space-y-2">
@@ -49,7 +75,7 @@ export default function Home() {
                 </div>
 
                 {/* Control Button */}
-                <div className="flex justify-left">
+                <div className="flex justify-left gap-6">
                     <Button
                         onClick={toggleListening}
                         size="lg"
@@ -59,6 +85,15 @@ export default function Home() {
                         {isListening
                             ? "⏹ Stop Listening"
                             : "🎤 Start Listening"}
+                    </Button>
+
+                    <Button
+                        onClick={uploadSlideshow}
+                        size="lg"
+                        variant={isUploading ? "destructive" : "default"}
+                        className="text-lg px-8 py-6"
+                    >
+                        📁 Upload file
                     </Button>
                 </div>
 
@@ -78,8 +113,8 @@ export default function Home() {
                 )}
 
                 {/* Display Areas */}
-                <div className="flex">
-                    <div className="w-1/2 flex flex-col gap-6">
+                <div className="flex gap-6">
+                    <div className="w-1/3 flex flex-col gap-6">
                         {/* Original Text */}
                         <Card>
                             <CardHeader>
@@ -119,7 +154,23 @@ export default function Home() {
                         </Card>
                     </div>
 
-                    <div className="w-1/2"></div>
+                    { /* Right half, put the slideshow here*/ }
+                    <div className="w-2/3">
+                        {slideshowFile ? (
+                            <iframe
+                                src={URL.createObjectURL(slideshowFile)}
+                                width="100%"
+                                height="100%"
+                                className="rounded-lg shadow"
+                            />
+                        ) : (
+                            <div className="flex items-center justify-center h-full text-muted-foreground">
+                                No slideshow uploaded
+                            </div>
+                        )}
+                    </div>
+
+
                 </div>
             </div>
         </div>
