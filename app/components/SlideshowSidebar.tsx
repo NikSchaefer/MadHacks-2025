@@ -10,6 +10,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VOICES } from "@/data/voices";
 import { AudioController } from "@/lib/audio-controller";
+import Image from "next/image";
 
 interface SlideshowSidebarProps {
     controller: AudioController;
@@ -51,7 +52,14 @@ export function SlideshowSidebar({
         <div className="w-1/3 flex flex-col gap-6">
             {/* Header */}
             <div className="text-left space-y-2">
-                <h1 className="text-4xl font-bold">AI Lecturer Translator</h1>
+                <Image
+                    src="/logo.png"
+                    alt="Logo"
+                    width={70}
+                    height={65}
+                    className="rounded-xl shadow-lg"
+                />
+                <h1 className="text-4xl font-bold">MadLectures</h1>
                 <p className="text-muted-foreground text-lg">
                     Transforming bad lectures into great ones, in real-time
                 </p>
@@ -129,47 +137,51 @@ export function SlideshowSidebar({
             )}
 
             {/* Original Text */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>Original Lecture</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="text-muted-foreground whitespace-pre-wrap min-h-[150px] max-h-[500px] overflow-y-auto pr-2">
-                        {transcript.length === 0 ? (
-                            <span className="text-muted-foreground/50">
-                                Waiting for audio...
-                            </span>
-                        ) : (
-                            <>
-                                {transcript}
-                                <div ref={transcriptEndRef} />
-                            </>
-                        )}
-                    </div>
-                </CardContent>
+            <Card className="border-primary/20 bg-white py-0">
+                <div className="py-6 h-full w-full">
+                    <CardHeader>
+                        <CardTitle>Original Lecture</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-muted-foreground whitespace-pre-wrap min-h-[150px] max-h-[500px] overflow-y-auto pr-2">
+                            {transcript.length === 0 ? (
+                                <span className="text-muted-foreground/50">
+                                    Waiting for audio...
+                                </span>
+                            ) : (
+                                <>
+                                    {transcript}
+                                    <div ref={transcriptEndRef} />
+                                </>
+                            )}
+                        </div>
+                    </CardContent>
+                </div>
             </Card>
 
             {/* Enhanced Text */}
-            <Card className="border-primary/20 bg-primary/5">
-                <CardHeader>
-                    <CardTitle className="text-primary">
-                        AI Enhanced Lecture
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="whitespace-pre-wrap min-h-[150px] max-h-[500px] overflow-y-auto pr-2">
-                        {script.length === 0 ? (
-                            <span className="text-muted-foreground/50">
-                                Enhanced version will appear here...
-                            </span>
-                        ) : (
-                            <>
-                                {script}
-                                <div ref={scriptEndRef} />
-                            </>
-                        )}
-                    </div>
-                </CardContent>
+            <Card className="border-primary/20 bg-white py-0">
+                <div className="py-6 h-full w-full bg-primary/5">
+                    <CardHeader>
+                        <CardTitle className="text-primary">
+                            AI Enhanced Lecture
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="whitespace-pre-wrap min-h-[150px] max-h-[500px] overflow-y-auto pr-2">
+                            {script.length === 0 ? (
+                                <span className="text-muted-foreground/50">
+                                    Enhanced version will appear here...
+                                </span>
+                            ) : (
+                                <>
+                                    {script}
+                                    <div ref={scriptEndRef} />
+                                </>
+                            )}
+                        </div>
+                    </CardContent>
+                </div>
             </Card>
         </div>
     );

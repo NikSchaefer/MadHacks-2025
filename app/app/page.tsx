@@ -186,15 +186,6 @@ export default function Home() {
                     onManualTrigger={triggerConfetti}
                     className="top-2 right-2 gap-1"
                 />
-                <div className="absolute top-6 left-6 z-50">
-                    <Image
-                        src="/logo.png"
-                        alt="Logo"
-                        width={70}
-                        height={65}
-                        className="rounded-xl shadow-lg"
-                    />
-                </div>
                 <WaveBackground />
             </div>
         );

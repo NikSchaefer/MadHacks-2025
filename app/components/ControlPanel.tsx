@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 import { VOICES } from "@/data/voices";
 import { AudioController } from "@/lib/audio-controller";
+import { ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface ControlPanelProps {
@@ -113,11 +114,11 @@ export function ControlPanel({
             <div className="flex gap-4 justify-center w-full">
                 <Button
                     variant="ghost"
+                    className="text-muted-foreground bg-transparent hover:text-foreground"
                     size="sm"
-                    className="text-muted-foreground text-xs hover:bg-transparent hover:text-foreground"
                     onClick={useDemoLecture}
                 >
-                    (Or use our demo lecture to get started)
+                    (Or use our demo lecture to get started...)
                 </Button>
                 {hasContent && (
                     <Button
