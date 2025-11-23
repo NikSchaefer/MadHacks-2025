@@ -61,6 +61,9 @@ export interface ProcessingMetric {
     step: string;
     duration: number;
     timestamp: number;
+    sttDuration?: number;
+    enhanceDuration?: number;
+    ttsDuration?: number;
     details?: string;
     error?: boolean;
 }

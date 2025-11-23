@@ -13,6 +13,7 @@ interface ScriptItem {
     id: string;
     script: string;
     timestamp: number;
+    voiceId: string;
 }
 
 export class AudioPipelineManager {
@@ -23,8 +24,8 @@ export class AudioPipelineManager {
     private contextWindowText: string = "";
     private contextWindowScript: string = "";
 
-    // Persona state
-    private currentPersona: string = "lecturer";
+    // Persona state (voice ID)
+    private currentPersona: string = "933563129e564b19a115bedd57b7406a"; // Default Sarah
 
     // Processing State
     private isProcessingScripts: boolean = false;
@@ -117,7 +118,9 @@ export class AudioPipelineManager {
         }
     }
 
-    public async processScriptQueue(persona: string = "lecturer") {
+    public async processScriptQueue(
+        persona: string = "933563129e564b19a115bedd57b7406a"
+    ) {
         // Update stored persona
         this.currentPersona = persona;
 
@@ -130,11 +133,14 @@ export class AudioPipelineManager {
                 const item = this.transcriptQueue.shift()!;
                 const startTime = Date.now();
 
+                // Use the current persona when processing starts for this chunk
+                const activePersona = this.currentPersona;
+
                 const result = await processTextToScript(
                     item.text,
                     this.contextWindowText,
                     this.contextWindowScript,
-                    this.currentPersona
+                    activePersona
                 );
 
                 if (!result.success || !result.enhancedText) {
@@ -168,6 +174,7 @@ export class AudioPipelineManager {
                     id: item.id,
                     script: result.enhancedText,
                     timestamp: Date.now(),
+                    voiceId: activePersona,
                 });
 
                 this.processSpeechQueue();
@@ -188,7 +195,10 @@ export class AudioPipelineManager {
                 const item = this.enhanceQueue.shift()!;
                 const startTime = Date.now();
 
-                const result = await processTextToSpeech(item.script);
+                const result = await processTextToSpeech(
+                    item.script,
+                    item.voiceId
+                );
 
                 if (!result.success || !result.audioBase64) {
                     this.onLog(`⚠️ Chunk ${item.id}: TTS failed.`);

@@ -1,12 +1,12 @@
 import { fishAudio } from "../fish/fish-auth";
 
-export async function textToSpeech(text: string): Promise<Buffer> {
+export async function textToSpeech(text: string, referenceId: string): Promise<Buffer> {
     try {
         // Call FishAudio API
         const audio = await fishAudio.textToSpeech.convert({
             text,
             format: "mp3",
-            reference_id: "933563129e564b19a115bedd57b7406a"
+            reference_id: referenceId,
         });
 
         // Convert API Response → Buffer

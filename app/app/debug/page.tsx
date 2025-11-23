@@ -2,8 +2,16 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { AudioController } from "@/lib/audio-controller";
 import { DEFAULT_CONFIG } from "@/lib/config";
+import { VOICES } from "@/data/voices";
 import { ProcessingMetric } from "@/lib/types";
 import { useEffect, useState } from "react";
 
@@ -47,6 +55,18 @@ export default function DebugPage() {
                 <div className="flex justify-between items-center">
                     <h1 className="text-3xl font-bold">Pipeline Debugger</h1>
                     <div className="flex gap-2">
+                        <Select onValueChange={(val) => controller.setPersona(val)}>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Select Voice" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {VOICES.map((voice) => (
+                                    <SelectItem key={voice.id} value={voice.id}>
+                                        {voice.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                         <div className="relative">
                             <input
                                 type="file"
@@ -178,8 +198,10 @@ export default function DebugPage() {
                                 <thead className="text-xs uppercase bg-slate-100 dark:bg-slate-800">
                                     <tr>
                                         <th className="px-4 py-2">ID</th>
-                                        <th className="px-4 py-2">Step</th>
-                                        <th className="px-4 py-2">Duration</th>
+                                        {/* <th className="px-4 py-2">STT</th>
+                                        <th className="px-4 py-2">Enhance</th>
+                                        <th className="px-4 py-2">TTS</th> */}
+                                        <th className="px-4 py-2">Total</th>
                                         <th className="px-4 py-2">Result</th>
                                     </tr>
                                 </thead>
@@ -192,10 +214,16 @@ export default function DebugPage() {
                                             <td className="px-4 py-2 font-mono">
                                                 {m.id}
                                             </td>
-                                            <td className="px-4 py-2">
-                                                {m.step}
+                                            {/* <td className="px-4 py-2">
+                                                {m.sttDuration ? `${m.sttDuration}ms` : '-'}
                                             </td>
                                             <td className="px-4 py-2">
+                                                {m.enhanceDuration ? `${m.enhanceDuration}ms` : '-'}
+                                            </td>
+                                            <td className="px-4 py-2">
+                                                {m.ttsDuration ? `${m.ttsDuration}ms` : '-'}
+                                            </td> */}
+                                            <td className="px-4 py-2 font-bold">
                                                 {m.duration}ms
                                             </td>
                                             <td className="px-4 py-2">
