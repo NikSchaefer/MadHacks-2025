@@ -47,9 +47,9 @@ export function ControlPanel({
     async function useDemoLecture() {
         try {
             setIsProcessingDemo(true);
-            const response = await fetch("/florian1.mp3");
+            const response = await fetch("/florian2.mp3");
             const blob = await response.blob();
-            const file = new File([blob], "florian1.mp3", {
+            const file = new File([blob], "florian2.mp3", {
                 type: "audio/mpeg",
             });
             controller.processFile(file);
