@@ -9,10 +9,23 @@ import { DEFAULT_CONFIG } from "@/lib/config";
 
 // import { useState, useEffect, useRef, useMemo } from "react"; // <--- Add useMemo
 
+const VOICES = [
+    { id: "alloy", name: "Alloy" },
+    { id: "echo", name: "Echo" },
+    { id: "fable", name: "Fable" },
+    { id: "onyx", name: "Onyx" },
+    { id: "nova", name: "Nova" },
+    { id: "shimmer", name: "Shimmer" },
+    { id: "sage", name: "Sage" },
+    { id: "coral", name: "Coral" },
+];
+
+
 export default function Home() {
     const [controller] = useState(() => new AudioController(DEFAULT_CONFIG));
     const [isListening, setIsListening] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const [isChangingVoice, setIsChangingVoice] = useState(false);
     const [statusMessage, setStatusMessage] = useState("");
     const [transcript, setTranscript] = useState("");
     const [script, setScript] = useState("");
@@ -56,11 +69,18 @@ export default function Home() {
         setStatusMessage(`Selected file: ${file.name}`);
     }
 
+    function changeVoice() {
+
+        setIsChangingVoice(true);
+    }
+    
+ 
     // --- Conditional layout ---
     if (!slideshowFile) {
         //centered single column layout
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-8">
+               
                 <div className="max-w-6xl w-full space-y-8">
                     {/* Header */}
                     <div className="text-center space-y-2">
@@ -76,7 +96,7 @@ export default function Home() {
                             onClick={toggleListening}
                             size="lg"
                             variant={isListening ? "destructive" : "default"}
-                            className="text-lg px-8 w-1/2 py-6"
+                            className="text-lg px-8 w-1/6 py-6"
                         >
                             {isListening ? "⏹ Stop Listening" : "🎤 Start Listening"}
                         </Button>
@@ -85,9 +105,17 @@ export default function Home() {
                             onClick={uploadSlideshow}
                             size="lg"
                             variant={isUploading ? "destructive" : "default"}
-                            className="text-lg px-8 w-1/2 py-6"
+                            className="text-lg px-8 w-1/6 py-6"
                         >
                             📁 Upload file
+                        </Button>
+                        <Button
+                            onClick={changeVoice}
+                            size="lg"
+                            variant={isChangingVoice ? "destructive" : "default"}
+                            className="text-lg px-8 w-1/6 py-6"
+                        >
+                            🗣️ Change Voice
                         </Button>
                     </div>
 
