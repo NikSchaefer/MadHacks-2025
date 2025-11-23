@@ -55,7 +55,9 @@ export default function DebugPage() {
                 <div className="flex justify-between items-center">
                     <h1 className="text-3xl font-bold">Pipeline Debugger</h1>
                     <div className="flex gap-2">
-                        <Select onValueChange={(val) => controller.setPersona(val)}>
+                        <Select
+                            onValueChange={(val) => controller.setPersona(val)}
+                        >
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Select Voice" />
                             </SelectTrigger>

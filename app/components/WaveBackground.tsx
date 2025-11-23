@@ -23,7 +23,7 @@ export function WaveBackground() {
                     fill="#1447e6"
                 ></path>
             </svg>
-            <div className="w-full absolute bottom-2 text-center text-sm text-muted-foreground z-20 pointer-events-auto">
+            <div className="w-full absolute bottom-4 text-center text-sm text-muted-foreground z-20 pointer-events-auto">
                 <a
                     href="https://github.com/NikSchaefer/MadHacks-2025"
                     className="text-white font-medium"

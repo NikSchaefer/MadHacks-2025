@@ -50,10 +50,10 @@ export class AudioController {
         });
     }
 
-    public setPersona(persona: string) {
+    public setPersona = (persona: string) => {
         this.log(`Switching persona to: ${persona}`);
         this.pipeline.setPersona(persona);
-    }
+    };
 
     public async startRecording() {
         if (this.isRecording) return;
@@ -114,8 +114,8 @@ export class AudioController {
         try {
             const arrayBuffer = await file.arrayBuffer();
             // Create offline context or standard context to decode
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const audioContext = new (window.AudioContext ||
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (window as any).webkitAudioContext)();
             const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 

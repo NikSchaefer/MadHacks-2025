@@ -14,6 +14,8 @@ import { WaveBackground } from "@/components/WaveBackground";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
+import Image from "next/image";
+
 export default function Home() {
     const [controller] = useState(() => new AudioController(DEFAULT_CONFIG));
     const [isListening, setIsListening] = useState(false);
@@ -114,6 +116,15 @@ export default function Home() {
                     enabled={confettiEnabled}
                     onToggle={setConfettiEnabled}
                 />
+                <div className="absolute top-6 left-6 z-50">
+                    <Image
+                        src="/logo.png"
+                        alt="Logo"
+                        width={80}
+                        height={80}
+                        className="rounded-xl"
+                    />
+                </div>
                 <WaveBackground />
             </div>
         );
@@ -162,6 +173,15 @@ export default function Home() {
                         id="confetti-switch"
                         checked={confettiEnabled}
                         onCheckedChange={setConfettiEnabled}
+                    />
+                </div>
+                <div className="absolute top-6 left-6 z-50">
+                    <Image
+                        src="/logo.png"
+                        alt="Logo"
+                        width={60}
+                        height={60}
+                        className="rounded-xl shadow-lg"
                     />
                 </div>
                 <WaveBackground />

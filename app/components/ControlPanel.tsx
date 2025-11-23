@@ -66,6 +66,14 @@ export function ControlPanel({
                     </span>
                 )}
             </Button>
+
+            <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground text-xs hover:bg-transparent hover:text-foreground"
+            >
+                (Or use our demo lecture to get started)
+            </Button>
         </div>
     );
 }
