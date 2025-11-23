@@ -222,7 +222,9 @@ export default function Home() {
                         onCheckedChange={setConfettiEnabled}
                     />
                 </div>
-
+                <div className="w-full text-center py-6 text-sm text-muted-foreground">
+                    <a href="https://github.com/NikSchaefer/MadHacks-2025" className="text-blue-500">Made with ❤️ in 24 hours @ MadHacks, 2025 By Nik, Ben, Henry, and Eric</a>
+                </div>
             </div>
         );
     } else {
@@ -355,6 +357,9 @@ export default function Home() {
                             className="rounded-lg shadow w-full"
                         />
                     </div>
+                </div>
+                <div className="w-full text-center py-6 text-sm text-muted-foreground">
+                    <a href="https://github.com/NikSchaefer/MadHacks-2025" className="text-blue-500">Made with ❤️ in 24 hours @ MadHacks, 2025 By Nik, Ben, Henry, and Eric</a>
                 </div>
             </div>
         );
