@@ -75,13 +75,17 @@ export default function Home() {
         setStatusMessage(`Selected file: ${file.name}`);
     }
 
-    function explodeConfetti() {
-        if (!confettiEnabled) return;
+    function triggerConfetti() {
         confetti({
             particleCount: 180,
             spread: 360,
             origin: { y: -0.4, x: 0.5 },
         });
+    }
+
+    function explodeConfetti() {
+        if (!confettiEnabled) return;
+        triggerConfetti();
     }
 
     function handleReset() {
@@ -129,6 +133,7 @@ export default function Home() {
                 <ConfettiToggle
                     enabled={confettiEnabled}
                     onToggle={setConfettiEnabled}
+                    onManualTrigger={triggerConfetti}
                 />
                 <div className="absolute top-6 left-6 z-50">
                     <Image
@@ -177,19 +182,12 @@ export default function Home() {
                         />
                     </div>
                 </div>
-                <div className="absolute top-2 right-2 flex items-center gap-1">
-                    <Label
-                        htmlFor="confetti-switch"
-                        className="text-sm font-medium"
-                    >
-                        🎉
-                    </Label>
-                    <Switch
-                        id="confetti-switch"
-                        checked={confettiEnabled}
-                        onCheckedChange={setConfettiEnabled}
-                    />
-                </div>
+                <ConfettiToggle
+                    enabled={confettiEnabled}
+                    onToggle={setConfettiEnabled}
+                    onManualTrigger={triggerConfetti}
+                    className="top-2 right-2 gap-1"
+                />
                 <div className="absolute top-6 left-6 z-50">
                     <Image
                         src="/logo.png"

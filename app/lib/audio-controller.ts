@@ -29,6 +29,14 @@ export class AudioController {
             (metric) => this.metrics.unshift(metric),
             (msg) => this.log(msg),
             (chunk) => {
+                // If we stopped recording/processing, ignore late-arriving chunks
+                if (!this.isRecording && !this.isProcessingFile) {
+                    this.log(
+                        `⚠️ Chunk ${chunk.id}: Speech ready but ignored (stopped).`
+                    );
+                    return;
+                }
+
                 this.log(
                     `✅ Chunk ${chunk.id}: Speech ready. Queuing for playback.`
                 );
@@ -82,6 +90,7 @@ export class AudioController {
         this.isRecording = false;
         this.recorder.stop();
         this.player.stop();
+        this.pipeline.reset(); // Clear any pending items in pipeline
         this.log("Recording stopped.");
     }
 
