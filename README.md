@@ -1,6 +1,10 @@
-# MadLectures
+# 🎙️ MadLectures
 
-Transforming bad lectures into great ones, in real-time
+### _Transforming bad lectures into great ones, in real-time._
+
+MadLectures listens to your lecture, uses Gemini AI to extract the good stuff, and speak it back to you using Fish Audio like in the quality of a ted talk.
+
+---
 
 ## Inspiration
 
