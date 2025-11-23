@@ -1,32 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { AudioController } from "@/lib/audio-controller";
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DEFAULT_CONFIG } from "@/lib/config";
 import confetti from "canvas-confetti";
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label";
-
-
-// const VOICES = [
-//     { id: "54e3a85ac9594ffa83264b8a494b901b", name: "SpongeBob" },
-//     { id: "933563129e564b19a115bedd57b7406a", name: "Sarah" },
-//     { id: "cc1d2d26fddf487496c74a7f40c7c871", name: "Mr. Beast" },
-//     { id: "e34c486929524d41b88646b4ac2f382f", name: "Venti" },
-//     { id: "9fad12dc142b429d9396190b0197adb8", name: "E-Girl" },
-//     { id: "0b2e96151d67433d93891f15efc25dbd", name: "Trap-A-Holics" },
-//     { id: "acc8237220d8470985ec9be6c4c480a9", name: "Hatsune Miku" },
-// ];
-import { VOICES } from "@/data/voices";
+import { Header } from "@/components/Header";
+import { ControlPanel } from "@/components/ControlPanel";
+import { StatusIndicator } from "@/components/StatusIndicator";
+import { TranscriptCards } from "@/components/TranscriptCards";
+import { SlideshowSidebar } from "@/components/SlideshowSidebar";
+import { ConfettiToggle } from "@/components/ConfettiToggle";
 
 export default function Home() {
     const [controller] = useState(() => new AudioController(DEFAULT_CONFIG));
@@ -43,7 +26,6 @@ export default function Home() {
     }, [slideshowFile]);
 
     const [confettiEnabled, setConfettiEnabled] = useState(true);
-
 
     // Poll for transcript and script updates
     useEffect(() => {
@@ -85,7 +67,7 @@ export default function Home() {
     }
 
     function explodeConfetti() {
-        if(!confettiEnabled) return;
+        if (!confettiEnabled) return;
         confetti({
             particleCount: 180,
             spread: 360,
@@ -93,115 +75,28 @@ export default function Home() {
         });
     }
 
- 
-
     // --- Conditional layout ---
     if (!slideshowFile) {
-        //centered single column layout
+        // Centered single column layout
         return (
-            
-            <div className="min-h-screen flex flex-col items-center justify-center p-8">
+            <div className="min-h-screen flex flex-col items-center justify-center pt-24">
                 <div className="max-w-6xl w-full space-y-8">
-                    {/* Header */}
-                    <div className="text-center space-y-2">
-                        <h1 className="text-4xl font-bold">
-                            AI Lecturer Translator
-                        </h1>
-                        <p className="text-muted-foreground text-lg">
-                            Transforming bad lectures into great ones, in
-                            real-time
-                        </p>
-                    </div>
+                    <Header />
 
-                    {/* Control Button */}
-                    <div className="flex justify-center gap-6">
-                        <Button
-                            onClick={toggleListening}
-                            size="lg"
-                            variant={isListening ? "destructive" : "default"}
-                            className="text-lg px-8 w-1/6 py-6"
-                        >
-                            {isListening
-                                ? "⏹ Stop Listening"
-                                : "🎤 Start Listening"}
-                        </Button>
+                    <ControlPanel
+                        controller={controller}
+                        isListening={isListening}
+                        isUploading={isUploading}
+                        onToggleListening={toggleListening}
+                        onUploadSlideshow={uploadSlideshow}
+                    />
 
-                        <Button
-                            onClick={uploadSlideshow}
-                            size="lg"
-                            variant={isUploading ? "destructive" : "default"}
-                            className="text-lg px-8 w-1/6 py-6"
-                        >
-                            📁 Upload file
-                        </Button>
-                        <Select onValueChange={controller.setPersona}>
-                            <SelectTrigger className="text-lg px-8 w-1/6 py-6">
-                                <SelectValue placeholder="Voice" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {VOICES.map((voice) => (
-                                    <SelectItem key={voice.id} value={voice.id}>
-                                        {voice.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                    <StatusIndicator
+                        isListening={isListening}
+                        statusMessage={statusMessage}
+                    />
 
-                    {/* Status Indicator */}
-                    {isListening && (
-                        <div className="flex flex-col items-center gap-2">
-                            <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                                <div className="size-3 bg-green-500 rounded-full animate-pulse" />
-                                <span className="font-medium">
-                                    Listening...
-                                </span>
-                            </div>
-                            {statusMessage && (
-                                <p className="text-sm text-muted-foreground">
-                                    {statusMessage}
-                                </p>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Original Text */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Original Lecture</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-muted-foreground wrap min-h-[300px] max-h-[500px] overflow-y-auto">
-                                {transcript.length === 0 ? (
-                                    <span className="text-muted-foreground/50">
-                                        Waiting for audio...
-                                    </span>
-                                ) : (
-                                    transcript
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Translated Text */}
-                    <Card className="border-primary/20 bg-primary/5">
-                        <CardHeader>
-                            <CardTitle className="text-primary">
-                                AI Enhanced Lecture
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-y-auto">
-                                {script.length === 0 ? (
-                                    <span className="text-muted-foreground/50">
-                                        Enhanced version will appear here...
-                                    </span>
-                                ) : (
-                                    script
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <TranscriptCards transcript={transcript} script={script} />
                 </div>
 
                 <input
@@ -212,21 +107,26 @@ export default function Home() {
                     onChange={handleFileChange}
                 />
 
-                <div className="absolute top-4 right-4 flex items-center gap-2">
-                    <Label htmlFor="confetti-switch" className="text-sm font-medium">
-                        🎉
-                    </Label>
-                    <Switch
-                        id="confetti-switch"
-                        checked={confettiEnabled}
-                        onCheckedChange={setConfettiEnabled}
-                    />
+                <ConfettiToggle
+                    enabled={confettiEnabled}
+                    onToggle={setConfettiEnabled}
+                />
+                <div className="w-full h-1/2">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 1440 320"
+                    >
+                        <path
+                            fill="#1447E6"
+                            fillOpacity="1"
+                            d="M0,128L60,106.7C120,85,240,43,360,37.3C480,32,600,64,720,90.7C840,117,960,139,1080,128C1200,117,1320,75,1380,53.3L1440,32L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
+                        ></path>
+                    </svg>
                 </div>
-
             </div>
         );
     } else {
-        //two column layout with slideshow on right
+        // Two column layout with slideshow on right
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-8">
                 <input
@@ -238,113 +138,16 @@ export default function Home() {
                 />
 
                 <div className="w-full space-y-8 flex gap-6">
-                    <div className="w-1/3 flex flex-col gap-6">
-                        {/* Header */}
-                        <div className="text-left space-y-2">
-                            <h1 className="text-4xl font-bold">
-                                AI Lecturer Translator
-                            </h1>
-                            <p className="text-muted-foreground text-lg">
-                                Transforming bad lectures into great ones, in
-                                real-time
-                            </p>
-                        </div>
-
-                        {/* Control Buttons */}
-                        <div className="flex justify-left gap-4">
-                            <Button
-                                onClick={toggleListening}
-                                size="lg"
-                                variant={
-                                    isListening ? "destructive" : "default"
-                                }
-                                className="text-lg w-1/9 px-7 py-6"
-                            >
-                                {isListening ? "⏹" : "👂"}
-                            </Button>
-
-                            <Button
-                                onClick={uploadSlideshow}
-                                size="lg"
-                                variant={
-                                    isUploading ? "destructive" : "default"
-                                }
-                                className="text-lg w-1/3 px-8 py-6"
-                            >
-                                📁 Upload file
-                            </Button>
-                            <Select onValueChange={controller.setPersona}>
-                                <SelectTrigger className="text-lg w-1/2 px-8 py-6">
-                                    <SelectValue placeholder="Voice" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {VOICES.map((voice) => (
-                                        <SelectItem
-                                            key={voice.id}
-                                            value={voice.id}
-                                        >
-                                            {voice.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {/* Status Indicator */}
-                        {isListening && (
-                            <div className="flex flex-col items-left gap-2">
-                                <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                                    <div className="size-3 bg-green-500 rounded-full animate-pulse" />
-                                    <span className="font-medium">
-                                        Listening...
-                                    </span>
-                                </div>
-                                {statusMessage && (
-                                    <p className="text-sm text-muted-foreground">
-                                        {statusMessage}
-                                    </p>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Original Text */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Original Lecture</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-muted-foreground whitespace-pre-wrap min-h-[150px] max-h-[500px] overflow-y-auto">
-                                    {transcript.length === 0 ? (
-                                        <span className="text-muted-foreground/50">
-                                            Waiting for audio...
-                                        </span>
-                                    ) : (
-                                        transcript
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Enhanced Text */}
-                        <Card className="border-primary/20 bg-primary/5">
-                            <CardHeader>
-                                <CardTitle className="text-primary">
-                                    AI Enhanced Lecture
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="whitespace-pre-wrap min-h-[150px] max-h-[500px] overflow-y-auto">
-                                    {script.length === 0 ? (
-                                        <span className="text-muted-foreground/50">
-                                            Enhanced version will appear here...
-                                        </span>
-                                    ) : (
-                                        script
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
+                    <SlideshowSidebar
+                        controller={controller}
+                        isListening={isListening}
+                        isUploading={isUploading}
+                        statusMessage={statusMessage}
+                        transcript={transcript}
+                        script={script}
+                        onToggleListening={toggleListening}
+                        onUploadSlideshow={uploadSlideshow}
+                    />
 
                     {/* Slideshow */}
                     <div className="w-2/3">
