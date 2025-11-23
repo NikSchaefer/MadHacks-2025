@@ -23,37 +23,42 @@ export async function textToScript({
     // Keep roughly last 1000 chars (approx 200-250 words) for continuity
     const contextLimit = 1000;
     const safePreviousScript = previousScript.slice(-contextLimit);
+    const safePreviousText = previousText.slice(-contextLimit);
 
     const result = await generateText({
         model: google("gemini-2.5-flash-lite"),
-        prompt: `You are a college professor.  reword this lecture script to be concise, by trying not to repeat yourself. Use transition words between topics. Limit responses to 1 sentence.  
+        prompt: `You are an expert speaker polishing a raw transcript for a live lecture.
+Your goal is to make the script cohesive, explanatory, and easy to listen to.
 
 Here is your persona:
 """
 ${systemPersona}
 """
 
-Our already transcribed text to be appended: 
+CONTEXT - The raw text we have ALREADY processed:
 """
-${safePreviousScript || "[No previous context]"}
+${safePreviousText || "[No previous text context]"}
 """
 
-New text to transcribe and then append:
+CONTEXT - The script we ALREADY generated from that text: 
+"""
+${safePreviousScript || "[No previous script context]"}
+"""
+
+NEW INPUT - New text to transcribe and append:
 """
 ${newText || "[No new text]"}
 """
 
 INSTRUCTIONS:
-- Output ONLY the new polished segment that continues from previousScript
-- **IMPORTANT**: If the text doesn't make sense or needs more context, you can return nothing to skip and wait for the next text before speaking.
-- This will be converted to speech and streamed in real-time, so quality and continuity are critical.
-- DO NOT REPEAT YOURSELF IN THE OUTPUT!!! TAKE THE PREVIOUS CONTEXT INTO ACCOUNT WHEN CONSIDERING THIS. Repeating yourself
-  or reiterating previously covered topics is a very large problem.
-- Remove "um", "uh", "like", false starts, repetitions, and verbal filler
-- Do NOT repeat or rewrite previousScript
-- Never restart or summarize - just continue the narrative forward - Think of this as adding the next paragraph to an ongoing document
-- Keep pacing similar to original (don't over-compress or over-expand)
-- Do not add any meta-text like "[continuing...]", "[new topic]", or any formatting - just the lecture content
+- Output ONLY the new polished segment that continues from the previous script.
+- **IMPORTANT**: Check the "NEW INPUT" against "CONTEXT - Raw text". If the new input overlaps with what was already processed, IGNORE the overlapping part.
+- **CRITICAL**: Check the "CONTEXT - Generated script". DO NOT repeat any information, phrases, or topics that are already in the generated script.
+- Fix grammar, remove repetition, and clarify muddled sentences to make them more explanatory.
+- Maintain the speaker's original intent and narrative flow. Do not summarize; rewrite it as a better version of the speech.
+- Use natural connections between ideas instead of heavy-handed transition words like "Furthermore" or "Indeed".
+- If the raw text is fragmented, reconstruct it into complete, logical sentences.
+- Keep the tone engaging and professional.
 
 Return the next segment of polished lecture script:
 `,

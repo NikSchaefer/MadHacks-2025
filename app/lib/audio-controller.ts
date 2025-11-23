@@ -222,6 +222,11 @@ export class AudioController {
             if (audioContext.state !== "closed") {
                 await audioContext.close();
             }
+
+            // Wait for pipeline to drain before marking as finished
+            while (this.pipeline.isBusy() && !this.shouldStopProcessing) {
+                await new Promise((resolve) => setTimeout(resolve, 500));
+            }
         } catch (err) {
             this.log(`Error processing file: ${err}`);
             console.error(err);

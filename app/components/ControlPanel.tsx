@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/select";
 import { VOICES } from "@/data/voices";
 import { AudioController } from "@/lib/audio-controller";
-import { ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface ControlPanelProps {
@@ -46,11 +45,12 @@ export function ControlPanel({
     }, [controller, isProcessingDemo]);
 
     async function useDemoLecture() {
+        const DEMO_FILE = "/physics2.mp3";
         try {
             setIsProcessingDemo(true);
-            const response = await fetch("/florian2.mp3");
+            const response = await fetch(DEMO_FILE);
             const blob = await response.blob();
-            const file = new File([blob], "florian2.mp3", {
+            const file = new File([blob], DEMO_FILE, {
                 type: "audio/mpeg",
             });
             controller.processFile(file);

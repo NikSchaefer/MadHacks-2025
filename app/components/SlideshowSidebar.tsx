@@ -143,7 +143,7 @@ export function SlideshowSidebar({
                         <CardTitle>Original Lecture</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-muted-foreground whitespace-pre-wrap min-h-[150px] max-h-[500px] overflow-y-auto pr-2">
+                        <div className="text-muted-foreground whitespace-pre-wrap h-[300px] overflow-y-auto pr-2">
                             {transcript.length === 0 ? (
                                 <span className="text-muted-foreground/50">
                                     Waiting for audio...
@@ -168,7 +168,7 @@ export function SlideshowSidebar({
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="whitespace-pre-wrap min-h-[150px] max-h-[500px] overflow-y-auto pr-2">
+                        <div className="whitespace-pre-wrap h-[300px] overflow-y-auto pr-2">
                             {script.length === 0 ? (
                                 <span className="text-muted-foreground/50">
                                     Enhanced version will appear here...
