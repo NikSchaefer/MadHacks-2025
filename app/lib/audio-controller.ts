@@ -13,7 +13,7 @@ import { AudioPlayerManager } from "./audio/player-manager";
 export class AudioController {
     private recorder: AudioRecorderManager;
     private pipeline: AudioPipelineManager;
-    private player: AudioPlayerManager;
+    public player: AudioPlayerManager;
 
     private isRecording: boolean = false;
     private fullTranscript: string = "";
@@ -101,6 +101,10 @@ export class AudioController {
 
     public getPlaybackBufferLength() {
         return this.player.getBufferLength();
+    }
+
+    public markDemoMode() {
+        this.player.markDemoMode();
     }
 
     // Getters for UI

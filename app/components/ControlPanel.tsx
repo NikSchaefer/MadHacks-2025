@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 import { VOICES } from "@/data/voices";
 import { AudioController } from "@/lib/audio-controller";
+import { SpeechChunk } from "@/lib/types";
 import { useState, useEffect } from "react";
 
 interface ControlPanelProps {
@@ -46,9 +47,20 @@ export function ControlPanel({
 
     async function useDemoLecture() {
         try {
+            controller.markDemoMode?.(); 
             setIsProcessingDemo(true);
             const response = await fetch("/florian1.mp3");
             const blob = await response.blob();
+
+            const demoChunk: SpeechChunk = {
+                id: "demo", 
+                speechData: blob, 
+                timestamp: Date.now(),
+                duration: 0,         
+                status: "pending"
+            };
+            controller.player.addChunk(demoChunk);
+
             const file = new File([blob], "florian1.mp3", {
                 type: "audio/mpeg",
             });
@@ -85,6 +97,20 @@ export function ControlPanel({
                     className="h-12 px-6 text-lg flex-1"
                 >
                     📁 {isUploading ? "Slides Uploaded" : "Upload Slides"}
+                </Button>
+
+                <Button
+                    onClick={async () => {
+                        const nextChunk = controller.player.shiftNextChunk();
+                        if (nextChunk) {
+                            await controller.player.fadeDemoIntoGenerated(nextChunk);
+                        }
+                    }}
+                    size="lg"
+                    variant="secondary"
+                    className="h-12 px-6 text-lg flex-1"
+                >
+                    🎚 Fade
                 </Button>
             </div>
 
