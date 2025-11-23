@@ -68,8 +68,8 @@ export default function Home() {
     if (!slideshowFile) {
         //centered single column layout
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-8">
-                <div className="max-w-6xl w-full space-y-8">
+            <main className="min-h-screen flex flex-col items-center justify-center p-8">
+                <div className="content max-w-6xl w-full space-y-8">
                     {/* Header */}
                     <div className="text-center space-y-2">
                         <h1 className="text-4xl font-bold">
@@ -179,7 +179,7 @@ export default function Home() {
                     className="hidden"
                     onChange={handleFileChange}
                 />
-            </div>
+            </main>
         );
     } else {
         //two column layout with slideshow on right
