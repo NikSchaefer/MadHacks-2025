@@ -2,11 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { AudioController } from "@/lib/audio-controller";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DEFAULT_CONFIG } from "@/lib/config";
 
 
+// import { useState, useEffect, useRef, useMemo } from "react"; // <--- Add useMemo
 
 export default function Home() {
     const [controller] = useState(() => new AudioController(DEFAULT_CONFIG));
@@ -17,6 +18,10 @@ export default function Home() {
     const [script, setScript] = useState("");
     const [slideshowFile, setSlideshowFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const pdfUrl = useMemo(() => {
+        if (!slideshowFile) return "";
+        return URL.createObjectURL(slideshowFile);
+    }, [slideshowFile]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -238,7 +243,7 @@ export default function Home() {
                     {/* Slideshow */}
                     <div className="w-2/3">
                         <iframe
-                            src={URL.createObjectURL(slideshowFile)}
+                            src={pdfUrl}
                             width="100%"
                             height="100%"
                             className="rounded-lg shadow w-full"
