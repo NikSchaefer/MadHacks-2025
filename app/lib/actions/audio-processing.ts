@@ -31,16 +31,20 @@ export async function processAudioToText(formData: FormData) {
 /**
  * Server Action: Enhance text with AI
  */
-export async function processTextToScript(text: string) {
+export async function processTextToScript(
+    text: string,
+    previousText: string = "",
+    previousScript: string = ""
+) {
     try {
         if (!text) {
             throw new Error("No text provided");
         }
 
         const enhancedText = await textToScript({
-            previousText: "",
+            previousText,
             newText: text,
-            previousScript: "",
+            previousScript,
         });
 
         return { success: true, enhancedText };
@@ -94,6 +98,10 @@ export async function processFullPipeline(formData: FormData) {
         console.log("=== Starting Full Pipeline ===");
         const startTime = Date.now();
 
+        // Extract context from formData
+        const previousText = (formData.get("previousText") as string) || "";
+        const previousScript = (formData.get("previousScript") as string) || "";
+
         // Step 1: Audio → Text
         console.log("Step 1: Audio → Text");
         const audioResult = await processAudioToText(formData);
@@ -116,7 +124,11 @@ export async function processFullPipeline(formData: FormData) {
 
         // Step 2: Text → Enhanced Script
         console.log("Step 2: Text → Enhanced Script");
-        const scriptResult = await processTextToScript(text);
+        const scriptResult = await processTextToScript(
+            text,
+            previousText,
+            previousScript
+        );
         if (!scriptResult.success) {
             console.error("Step 2 failed:", scriptResult.error);
             return { success: false, error: scriptResult.error };

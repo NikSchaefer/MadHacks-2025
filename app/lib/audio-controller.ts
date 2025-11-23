@@ -1,4 +1,9 @@
-import { AudioChunk, AudioConfig, SpeechChunk } from "./types";
+import {
+    AudioChunk,
+    AudioConfig,
+    SpeechChunk,
+    ProcessingMetric,
+} from "./types";
 import { processFullPipeline } from "./actions/audio-processing";
 
 /**
@@ -28,8 +33,40 @@ export class AudioController {
     private audioProcessingQueue: AudioChunk[] = [];
     private isProcessing: boolean = false;
 
+    // Debug/Metrics
+    public logs: string[] = [];
+    public metrics: ProcessingMetric[] = [];
+
     constructor(config: AudioConfig) {
         this.config = config;
+    }
+
+    private log(message: string) {
+        const timestamp = new Date().toISOString().split("T")[1].slice(0, -1);
+        const logEntry = `[${timestamp}] ${message}`;
+        this.logs.unshift(logEntry);
+        console.log(message);
+
+        // Keep logs size manageable
+        if (this.logs.length > 1000) {
+            this.logs.pop();
+        }
+    }
+
+    public getLogs(): string[] {
+        return this.logs;
+    }
+
+    public getMetrics(): ProcessingMetric[] {
+        return this.metrics;
+    }
+
+    public getQueueLength(): number {
+        return this.audioProcessingQueue.length;
+    }
+
+    public getPlaybackBufferLength(): number {
+        return this.speechChunksBuffer.length;
     }
 
     public getIsRecording(): boolean {
@@ -168,29 +205,201 @@ export class AudioController {
         this.isProcessing = false;
     }
 
-    private async processQueue(): Promise<void> {
-        // If already processing or queue is empty, return
+    /**
+     * Simulates streaming by processing an existing audio file
+     * Splits the file into chunks and processes them sequentially
+     */
+    async processFile(file: File): Promise<void> {
+        if (this.isProcessing) return;
+
+        this.log(`Processing file: ${file.name} (${file.size} bytes)`);
+
+        // Reset state
+        this.fullTranscript = "";
+        this.fullScript = "";
+        this.startSpeechProcessing();
+
+        // We'll slice the file into chunks based on the config duration
+        // This is an approximation since we don't know the exact byte/time ratio without decoding
+        // But for testing, slicing by size is often sufficient if we estimate bitrate
+
+        // Estimate: 32kbps opus = 4KB/s. Let's assume a safe chunk size.
+        // Better approach: Decode the whole file, then slice the AudioBuffer
+
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const audioContext = new AudioContext();
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+            const totalDuration = audioBuffer.duration;
+            const sampleRate = audioBuffer.sampleRate;
+            const numberOfChannels = audioBuffer.numberOfChannels;
+            const chunkDuration = this.config.chunkDurationMs / 1000; // seconds
+
+            this.log(
+                `File duration: ${totalDuration.toFixed(
+                    1
+                )}s, splitting into ~${chunkDuration}s chunks`
+            );
+
+            let currentTime = 0;
+            let chunkIndex = 0;
+
+            while (currentTime < totalDuration) {
+                const chunkLength = Math.min(
+                    chunkDuration,
+                    totalDuration - currentTime
+                );
+                const frameCount = Math.floor(chunkLength * sampleRate);
+                const startFrame = Math.floor(currentTime * sampleRate);
+
+                // Create a new buffer for this chunk
+                const chunkBuffer = audioContext.createBuffer(
+                    numberOfChannels,
+                    frameCount,
+                    sampleRate
+                );
+
+                // Copy data channel by channel
+                for (let channel = 0; channel < numberOfChannels; channel++) {
+                    const channelData = audioBuffer.getChannelData(channel);
+                    const chunkChannelData =
+                        chunkBuffer.getChannelData(channel);
+
+                    // Copy the segment
+                    for (let i = 0; i < frameCount; i++) {
+                        if (startFrame + i < channelData.length) {
+                            chunkChannelData[i] = channelData[startFrame + i];
+                        }
+                    }
+                }
+
+                // Convert chunk buffer to Blob (wav/mp3 simulation)
+                // Since we can't easily encode to MP3/WebM in browser without heavy libraries like ffmpeg.wasm,
+                // we'll send the raw WAV data which is supported by most backends, or a simple wav header.
+                const wavBlob = await this.audioBufferToWav(chunkBuffer);
+
+                const chunk: AudioChunk = {
+                    id: `file-${chunkIndex++}`,
+                    audioData: wavBlob,
+                    timestamp: Date.now(),
+                    duration: chunkLength * 1000,
+                    status: "pending",
+                };
+
+                this.audioProcessingQueue.push(chunk);
+                currentTime += chunkDuration;
+            }
+
+            this.log(
+                `Queued ${this.audioProcessingQueue.length} chunks from file`
+            );
+            this.processQueue();
+        } catch (error) {
+            this.log(`Error processing file: ${error}`);
+            console.error(error);
+        }
+    }
+
+    // Helper to convert AudioBuffer to WAV Blob
+    private audioBufferToWav(buffer: AudioBuffer): Promise<Blob> {
+        return new Promise((resolve) => {
+            const length = buffer.length * buffer.numberOfChannels * 2 + 44;
+            const arrayBuffer = new ArrayBuffer(length);
+            const view = new DataView(arrayBuffer);
+            const channels = [];
+            let offset = 0;
+            let pos = 0;
+
+            // write WAVE header
+            setUint32(0x46464952); // "RIFF"
+            setUint32(length - 8); // file length - 8
+            setUint32(0x45564157); // "WAVE"
+
+            setUint32(0x20746d66); // "fmt " chunk
+            setUint32(16); // length = 16
+            setUint16(1); // PCM (uncompressed)
+            setUint16(buffer.numberOfChannels);
+            setUint32(buffer.sampleRate);
+            setUint32(buffer.sampleRate * 2 * buffer.numberOfChannels); // avg. bytes/sec
+            setUint16(buffer.numberOfChannels * 2); // block-align
+            setUint16(16); // 16-bit (hardcoded in this example)
+
+            setUint32(0x61746164); // "data" - chunk
+            setUint32(length - pos - 4); // chunk length
+
+            // write interleaved data
+            for (let i = 0; i < buffer.numberOfChannels; i++)
+                channels.push(buffer.getChannelData(i));
+
+            while (pos < buffer.length) {
+                for (let i = 0; i < buffer.numberOfChannels; i++) {
+                    let sample = Math.max(-1, Math.min(1, channels[i][pos])); // clamp
+                    sample =
+                        (0.5 + sample < 0 ? sample * 32768 : sample * 32767) |
+                        0; // scale to 16-bit signed int
+                    view.setInt16(44 + offset, sample, true);
+                    offset += 2;
+                }
+                pos++;
+            }
+
+            resolve(new Blob([arrayBuffer], { type: "audio/wav" }));
+
+            function setUint16(data: number) {
+                view.setUint16(pos, data, true);
+                pos += 2;
+            }
+
+            function setUint32(data: number) {
+                view.setUint32(pos, data, true);
+                pos += 4;
+            }
+        });
+    }
+
+    private processQueue(): void {
         if (this.isProcessing || this.audioProcessingQueue.length === 0) {
             return;
         }
 
         this.isProcessing = true;
 
-        while (this.audioProcessingQueue.length > 0) {
-            const chunk = this.audioProcessingQueue.shift()!;
-            await this.processStage1(chunk);
-        }
+        // Use a recursive function to chain promises
+        const processNext = () => {
+            if (this.audioProcessingQueue.length === 0) {
+                this.isProcessing = false;
+                return;
+            }
 
-        this.isProcessing = false;
+            const chunk = this.audioProcessingQueue.shift()!;
+
+            // Chain the next chunk processing after this one completes (success or fail)
+            this.processStage1(chunk)
+                .then(() => {
+                    processNext();
+                })
+                .catch((err) => {
+                    console.error("Queue processing error:", err);
+                    processNext(); // Continue even if one fails
+                });
+        };
+
+        // Start the chain
+        processNext();
     }
 
     public async processStage1(chunk: AudioChunk): Promise<void> {
+        const startTime = Date.now();
         try {
             chunk.status = "transcribing";
+            this.log(`Starting processing for chunk ${chunk.id}`);
 
             // Create FormData with audio blob
             const formData = new FormData();
             formData.append("audio", chunk.audioData);
+            formData.append("previousText", this.fullTranscript);
+            formData.append("previousScript", this.fullScript);
 
             // Call server action for full pipeline: Audio → Text → Script → Speech
             const result = await processFullPipeline(formData);
@@ -199,8 +408,18 @@ export class AudioController {
                 throw new Error(result.error);
             }
 
+            const duration = Date.now() - startTime;
+            this.metrics.unshift({
+                id: chunk.id,
+                step: "pipeline",
+                duration,
+                timestamp: Date.now(),
+                details: "Full pipeline success",
+            });
+
             // If the audio is empty, don't process it
             if (result.skipped || !result.audioBase64) {
+                this.log(`Skipped empty/silent chunk ${chunk.id}`);
                 return;
             }
 
@@ -225,29 +444,38 @@ export class AudioController {
                 status: "pending",
             });
 
-            console.log(`✓ Stage 1 complete: Ready for playback`);
+            this.log(`✓ Stage 1 complete for ${chunk.id} in ${duration}ms`);
         } catch (error) {
             chunk.status = "error";
-            console.error(
-                "Error in Stage 1 (Audio→Text→Script→Speech):",
-                error
-            );
+            const duration = Date.now() - startTime;
+            this.log(`Error in Stage 1 for ${chunk.id}: ${error}`);
+            this.metrics.unshift({
+                id: chunk.id,
+                step: "pipeline",
+                duration,
+                timestamp: Date.now(),
+                error: true,
+                details: String(error),
+            });
         }
     }
 
     private audioContext: AudioContext | null = null;
 
+    private isPlaying: boolean = false;
+
     private startSpeechProcessing(): void {
-        this.speechInterval = setInterval(async () => {
-            if (this.speechChunksBuffer.length === 0) return;
+        this.speechInterval = setInterval(() => {
+            if (this.speechChunksBuffer.length === 0 || this.isPlaying) return;
 
             const chunk = this.speechChunksBuffer.shift()!;
-            await this.playSpeech(chunk);
+            this.playSpeech(chunk);
         }, 100);
     }
 
     private async playSpeech(chunk: SpeechChunk): Promise<void> {
         try {
+            this.isPlaying = true;
             chunk.status = "complete";
 
             // Initialize audio context if needed
@@ -265,12 +493,23 @@ export class AudioController {
             const source = this.audioContext.createBufferSource();
             source.buffer = audioBuffer;
             source.connect(this.audioContext.destination);
-            source.start();
 
-            console.log(`✓ Speech complete: Playing audio chunk ${chunk.id}`);
+            // When this audio finishes, mark as not playing so next chunk can start
+            source.onended = () => {
+                this.isPlaying = false;
+                this.log(`✓ Finished playing chunk ${chunk.id}`);
+            };
+
+            source.start();
+            this.log(
+                `▶ Playing audio chunk ${
+                    chunk.id
+                } (${audioBuffer.duration.toFixed(1)}s)`
+            );
         } catch (error) {
+            this.isPlaying = false;
             chunk.status = "error";
-            console.error("Error in Speech (Playback):", error);
+            this.log(`Error in Speech (Playback): ${error}`);
         }
     }
 }
