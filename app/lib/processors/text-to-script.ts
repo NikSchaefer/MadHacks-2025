@@ -47,6 +47,8 @@ INSTRUCTIONS:
 - Output ONLY the new polished segment that continues from previousScript
 - **IMPORTANT**: If the text doesn't make sense or needs more context, you can return nothing to skip and wait for the next text before speaking.
 - This will be converted to speech and streamed in real-time, so quality and continuity are critical.
+- DO NOT REPEAT YOURSELF IN THE OUTPUT!!! TAKE THE PREVIOUS CONTEXT INTO ACCOUNT WHEN CONSIDERING THIS. Repeating yourself
+  or reiterating previously covered topics is a very large problem.
 - Remove "um", "uh", "like", false starts, repetitions, and verbal filler
 - Do NOT repeat or rewrite previousScript
 - Never restart or summarize - just continue the narrative forward - Think of this as adding the next paragraph to an ongoing document
