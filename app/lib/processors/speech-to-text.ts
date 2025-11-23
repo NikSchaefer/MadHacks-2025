@@ -21,7 +21,8 @@ export async function speechToText(audio: Blob) {
         }
 
         // Convert Blob to File (Fish Audio API expects File object)
-        const file = new File([audio], "audio.webm", { type: audio.type });
+        const extension = audio.type.split('/')[1]?.split(';')[0] || 'bin';
+        const file = new File([audio], `audio.${extension}`, { type: audio.type });
 
         // English transcription
         const result = await fishAudio.speechToText.convert({

@@ -111,17 +111,141 @@ export class AudioController {
         this.fullScript = "";
         this.pipeline.reset();
 
-        // Simple simulation: Read file, pretend it's one big chunk or split it?
-        // For hackathon speed, let's just send the whole file as one chunk
-        // (or better, split it in the controller if we want to test streaming).
-        // To keep it modular, we could ask the recorder to "record from file"
-        // but that's complex. Let's just inject it into the pipeline directly.
-
         try {
-            const blob = new Blob([file], { type: file.type });
-            this.pipeline.processRecordedAudio(blob, "file-upload");
+            const arrayBuffer = await file.arrayBuffer();
+            // Create offline context or standard context to decode
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+            // Chunk duration in seconds
+            const chunkDuration = 10;
+            const sampleRate = audioBuffer.sampleRate;
+            const samplesPerChunk = chunkDuration * sampleRate;
+
+            const totalDuration = audioBuffer.duration;
+            const totalChunks = Math.ceil(totalDuration / chunkDuration);
+
+            this.log(
+                `Audio duration: ${totalDuration.toFixed(
+                    2
+                )}s. Splitting into ${totalChunks} chunks of ${chunkDuration}s.`
+            );
+
+            for (let i = 0; i < totalChunks; i++) {
+                const startSample = i * samplesPerChunk;
+                const endSample = Math.min(
+                    (i + 1) * samplesPerChunk,
+                    audioBuffer.length
+                );
+                const frameCount = endSample - startSample;
+
+                // Create a new buffer for this chunk
+                const chunkBuffer = audioContext.createBuffer(
+                    audioBuffer.numberOfChannels,
+                    frameCount,
+                    sampleRate
+                );
+
+                // Copy channel data
+                for (
+                    let channel = 0;
+                    channel < audioBuffer.numberOfChannels;
+                    channel++
+                ) {
+                    const channelData = audioBuffer.getChannelData(channel);
+                    const chunkChannelData =
+                        chunkBuffer.getChannelData(channel);
+                    chunkChannelData.set(
+                        channelData.subarray(startSample, endSample)
+                    );
+                }
+
+                // Convert to WAV
+                const chunkBlob = this.audioBufferToWav(chunkBuffer);
+
+                const id = `file-${Date.now()}-${i}`;
+                this.log(
+                    `🎤 Chunk ${id}: File slice ${i + 1}/${totalChunks} (${
+                        chunkBlob.size
+                    } bytes).`
+                );
+
+                // Send to pipeline
+                this.pipeline.processRecordedAudio(chunkBlob, id);
+
+                // Simulate network/recording delay
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+            }
+
+            // Close context to free resources
+            if (audioContext.state !== "closed") {
+                await audioContext.close();
+            }
         } catch (err) {
             this.log(`Error processing file: ${err}`);
+            console.error(err);
         }
+    }
+
+    private audioBufferToWav(buffer: AudioBuffer): Blob {
+        const numOfChan = buffer.numberOfChannels;
+        const length = buffer.length * numOfChan * 2 + 44;
+        const bufferArr = new ArrayBuffer(length);
+        const view = new DataView(bufferArr);
+        const channels = [];
+        let i;
+        let sample;
+        let pos = 0;
+
+        // write WAVE header
+        // "RIFF"
+        view.setUint32(0, 0x52494646, false);
+        // file length - 8
+        view.setUint32(4, length - 8, true);
+        // "WAVE"
+        view.setUint32(8, 0x57415645, false);
+
+        // "fmt " chunk
+        view.setUint32(12, 0x666d7420, false);
+        // length = 16
+        view.setUint32(16, 16, true);
+        // PCM (uncompressed)
+        view.setUint16(20, 1, true);
+        // Number of channels
+        view.setUint16(22, numOfChan, true);
+        // Sample rate
+        view.setUint32(24, buffer.sampleRate, true);
+        // Byte rate (sampleRate * blockAlign)
+        view.setUint32(28, buffer.sampleRate * 2 * numOfChan, true);
+        // Block align (channelCount * bytesPerSample)
+        view.setUint16(32, numOfChan * 2, true);
+        // Bits per sample
+        view.setUint16(34, 16, true);
+
+        // "data" - chunk
+        view.setUint32(36, 0x64617461, false);
+        // data chunk length
+        view.setUint32(40, length - 44, true);
+
+        // write interleaved data
+        for (i = 0; i < buffer.numberOfChannels; i++)
+            channels.push(buffer.getChannelData(i));
+
+        pos = 44;
+        let offset_idx = 0;
+
+        while (offset_idx < buffer.length) {
+            for (i = 0; i < numOfChan; i++) {
+                sample = Math.max(-1, Math.min(1, channels[i][offset_idx])); // clamp
+                // scale to 16-bit signed int
+                sample = (sample < 0 ? sample * 0x8000 : sample * 0x7fff) | 0;
+                view.setInt16(pos, sample, true);
+                pos += 2;
+            }
+            offset_idx++;
+        }
+
+        return new Blob([bufferArr], { type: "audio/wav" });
     }
 }
