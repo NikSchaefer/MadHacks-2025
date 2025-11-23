@@ -64,57 +64,57 @@ export default function Home() {
             />
 
             <div className="w-full space-y-8">
-                {/* Header */}
-                <div className="text-left space-y-2">
-                    <h1 className="text-4xl font-bold">
-                        AI Lecturer Translator
-                    </h1>
-                    <p className="text-muted-foreground text-lg">
-                        Transforming bad lectures into great ones, in real-time
-                    </p>
-                </div>
-
-                {/* Control Button */}
-                <div className="flex justify-left gap-6">
-                    <Button
-                        onClick={toggleListening}
-                        size="lg"
-                        variant={isListening ? "destructive" : "default"}
-                        className="text-lg px-8 py-6"
-                    >
-                        {isListening
-                            ? "⏹ Stop Listening"
-                            : "🎤 Start Listening"}
-                    </Button>
-
-                    <Button
-                        onClick={uploadSlideshow}
-                        size="lg"
-                        variant={isUploading ? "destructive" : "default"}
-                        className="text-lg px-8 py-6"
-                    >
-                        📁 Upload file
-                    </Button>
-                </div>
-
-                {/* Status Indicator */}
-                {isListening && (
-                    <div className="flex flex-col items-left gap-2">
-                        <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                            <div className="size-3 bg-green-500 rounded-full animate-pulse" />
-                            <span className="font-medium">Listening...</span>
-                        </div>
-                        {statusMessage && (
-                            <p className="text-sm text-muted-foreground">
-                                {statusMessage}
-                            </p>
-                        )}
-                    </div>
-                )}
-
                 {/* Display Areas */}
                 <div className="flex gap-6">
                     <div className="w-1/3 flex flex-col gap-6">
+                    {/* Header */}
+                        <div className="text-left space-y-2">
+                            <h1 className="text-4xl font-bold">
+                                AI Lecturer Translator
+                            </h1>
+                            <p className="text-muted-foreground text-lg">
+                                Transforming bad lectures into great ones, in real-time
+                            </p>
+                        </div>
+
+                        {/* Control Button */}
+                        <div className="flex justify-left gap-6">
+                            <Button
+                                onClick={toggleListening}
+                                size="lg"
+                                variant={isListening ? "destructive" : "default"}
+                                className="text-lg px-8 py-6"
+                            >
+                                {isListening
+                                    ? "⏹ Stop Listening"
+                                    : "🎤 Start Listening"}
+                            </Button>
+
+                            <Button
+                                onClick={uploadSlideshow}
+                                size="lg"
+                                variant={isUploading ? "destructive" : "default"}
+                                className="text-lg px-8 py-6"
+                            >
+                                📁 Upload file
+                            </Button>
+                        </div>
+
+                        {/* Status Indicator */}
+                        {isListening && (
+                            <div className="flex flex-col items-left gap-2">
+                                <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                                    <div className="size-3 bg-green-500 rounded-full animate-pulse" />
+                                    <span className="font-medium">Listening...</span>
+                                </div>
+                                {statusMessage && (
+                                    <p className="text-sm text-muted-foreground">
+                                        {statusMessage}
+                                    </p>
+                                )}
+                            </div>
+                        )}
+
                         {/* Original Text */}
                         <Card>
                             <CardHeader>
@@ -161,7 +161,7 @@ export default function Home() {
                                 src={URL.createObjectURL(slideshowFile)}
                                 width="100%"
                                 height="100%"
-                                className="rounded-lg shadow"
+                                className="rounded-lg shadow w-full"
                             />
                         ) : (
                             <div className="flex items-center justify-center h-full text-muted-foreground">
@@ -169,8 +169,6 @@ export default function Home() {
                             </div>
                         )}
                     </div>
-
-
                 </div>
             </div>
         </div>
