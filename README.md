@@ -2,11 +2,11 @@
 
 Core:
 
--   Optimize the efficiency of the AI processing
 -   Make a beautiful UI
--   Add previous context to the AI prompt
--   Maybe: We consider streaming the audio
+-   Make a name/logo
+-   Prep for the demo
 
-Nice to have:
+    -   4 couple min clips of a shitty lecture
 
--   Uploading lectures
+-   New ideas
+    -   Chat with your lecture
