@@ -49,7 +49,7 @@ export function ControlPanel({
         try {
             controller.markDemoMode?.(); 
             setIsProcessingDemo(true);
-            const response = await fetch("/florian1.mp3");
+            const response = await fetch("/florian2.mp3");
             const blob = await response.blob();
 
             const demoChunk: SpeechChunk = {
@@ -61,7 +61,7 @@ export function ControlPanel({
             };
             controller.player.addChunk(demoChunk);
 
-            const file = new File([blob], "florian1.mp3", {
+            const file = new File([blob], "florian2.mp3", {
                 type: "audio/mpeg",
             });
             controller.processFile(file);
@@ -139,11 +139,11 @@ export function ControlPanel({
             <div className="flex gap-4 justify-center w-full">
                 <Button
                     variant="ghost"
+                    className="text-muted-foreground bg-transparent hover:text-foreground"
                     size="sm"
-                    className="text-muted-foreground text-xs hover:bg-transparent hover:text-foreground"
                     onClick={useDemoLecture}
                 >
-                    (Or use our demo lecture to get started)
+                    (Or use our demo lecture to get started...)
                 </Button>
                 {hasContent && (
                     <Button
