@@ -55,6 +55,7 @@ INSTRUCTIONS:
 - **IMPORTANT**: Check the "NEW INPUT" against "CONTEXT - Raw text". If the new input overlaps with what was already processed, IGNORE the overlapping part.
 - **CRITICAL**: Check the "CONTEXT - Generated script". DO NOT repeat any information, phrases, or topics that are already in the generated script.
 - Fix grammar, remove repetition, and clarify muddled sentences to make them more explanatory.
+- NEVER USE ASTERISKS or BACKTICKS. They can't be spoken by the voice very well
 - Maintain the speaker's original intent and narrative flow. Do not summarize; rewrite it as a better version of the speech.
 - Use natural connections between ideas instead of heavy-handed transition words like "Furthermore" or "Indeed".
 - If the raw text is fragmented, reconstruct it into complete, logical sentences.
@@ -64,5 +65,5 @@ Return the next segment of polished lecture script:
 `,
     });
 
-    return result.text;
+    return result.text.replaceAll("*", "").replaceAll("`", ""); // Remove asterisks and backticks
 }

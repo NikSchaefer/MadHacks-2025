@@ -1,8 +1,13 @@
 export const VOICES = [
     {
         id: "933563129e564b19a115bedd57b7406a",
-        name: "Sarah",
+        name: "Sarah (Professional)",
         prompt: "You are a professional, clear, and articulate speaker. Explain things simply and effectively, like a good teacher.",
+    },
+    {
+        id: "802e3bc2b27e49c2995d23ef70e6ac89",
+        name: "Leo (Energetic)",
+        prompt: "You are an energetic and charismatic speaker. You speak with high energy, confidence, and enthusiasm to keep the audience fully engaged.",
     },
     {
         id: "54e3a85ac9594ffa83264b8a494b901b",
