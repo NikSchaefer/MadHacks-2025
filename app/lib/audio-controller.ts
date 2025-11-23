@@ -73,10 +73,24 @@ export class AudioController {
     }
 
     public async stopRecording() {
+        if (this.isProcessingFile) {
+            this.shouldStopProcessing = true;
+            // Wait slightly for the loop to break
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+
         this.isRecording = false;
         this.recorder.stop();
         this.player.stop();
         this.log("Recording stopped.");
+    }
+
+    public reset() {
+        this.stopRecording();
+        this.fullTranscript = "";
+        this.fullScript = "";
+        this.pipeline.reset();
+        this.log("Session reset.");
     }
 
     public getQueueLength() {
@@ -104,8 +118,19 @@ export class AudioController {
         if (this.logs.length > 1000) this.logs.pop();
     }
 
+    public getIsProcessingFile() {
+        return this.isProcessingFile;
+    }
+
+    private isProcessingFile = false;
+    private shouldStopProcessing = false;
+
     // Passthrough for legacy file support (if needed)
     async processFile(file: File) {
+        if (this.isProcessingFile) return;
+        this.isProcessingFile = true;
+        this.shouldStopProcessing = false;
+
         this.log(`Processing file: ${file.name}`);
         this.fullTranscript = "";
         this.fullScript = "";
@@ -177,6 +202,11 @@ export class AudioController {
 
                 // Simulate network/recording delay
                 await new Promise((resolve) => setTimeout(resolve, 2000));
+
+                if (this.shouldStopProcessing) {
+                    this.log("File processing stopped by user.");
+                    break;
+                }
             }
 
             // Close context to free resources
@@ -186,6 +216,8 @@ export class AudioController {
         } catch (err) {
             this.log(`Error processing file: ${err}`);
             console.error(err);
+        } finally {
+            this.isProcessingFile = false;
         }
     }
 

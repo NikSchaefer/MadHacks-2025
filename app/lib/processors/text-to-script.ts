@@ -19,13 +19,23 @@ export async function textToScript({
 
     const systemPersona = getVoicePrompt(persona);
 
+    // Limit previousScript context to avoid token limits and crashes
+    // Keep roughly last 1000 chars (approx 200-250 words) for continuity
+    const contextLimit = 1000;
+    const safePreviousScript = previousScript.slice(-contextLimit);
+
     const result = await generateText({
         model: google("gemini-2.5-flash-lite"),
         prompt: `You are a college professor. reword this lecture script to be concise, by trying not to repeat yourself. Use transition words between topics. Limit responses to 1 sentence.  
 
+Here is your persona:
+"""
+${systemPersona}
+"""
+
 Our already transcribed text to be appended: 
 """
-${previousScript}
+${safePreviousScript}
 """
 
 New text to transcribe and then append:

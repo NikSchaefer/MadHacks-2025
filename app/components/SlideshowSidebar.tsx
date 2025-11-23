@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Select,
@@ -19,6 +20,7 @@ interface SlideshowSidebarProps {
     script: string;
     onToggleListening: () => void;
     onUploadSlideshow: () => void;
+    onReset: () => void;
 }
 
 export function SlideshowSidebar({
@@ -30,7 +32,21 @@ export function SlideshowSidebar({
     script,
     onToggleListening,
     onUploadSlideshow,
+    onReset,
 }: SlideshowSidebarProps) {
+    const transcriptEndRef = useRef<HTMLDivElement>(null);
+    const scriptEndRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        transcriptEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [transcript]);
+
+    useEffect(() => {
+        scriptEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [script]);
+
+    const hasContent = transcript.length > 0 || script.length > 0;
+
     return (
         <div className="w-1/3 flex flex-col gap-6">
             {/* Header */}
@@ -84,6 +100,17 @@ export function SlideshowSidebar({
                         </span>
                     )}
                 </Button>
+
+                {hasContent && (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive/80 text-xs hover:bg-destructive/10 hover:text-destructive"
+                        onClick={onReset}
+                    >
+                        ↺ Reset Session
+                    </Button>
+                )}
             </div>
 
             {/* Status Indicator */}
@@ -107,13 +134,16 @@ export function SlideshowSidebar({
                     <CardTitle>Original Lecture</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="text-muted-foreground whitespace-pre-wrap min-h-[150px] max-h-[500px] overflow-y-auto">
+                    <div className="text-muted-foreground whitespace-pre-wrap min-h-[150px] max-h-[500px] overflow-y-auto pr-2">
                         {transcript.length === 0 ? (
                             <span className="text-muted-foreground/50">
                                 Waiting for audio...
                             </span>
                         ) : (
-                            transcript
+                            <>
+                                {transcript}
+                                <div ref={transcriptEndRef} />
+                            </>
                         )}
                     </div>
                 </CardContent>
@@ -127,13 +157,16 @@ export function SlideshowSidebar({
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="whitespace-pre-wrap min-h-[150px] max-h-[500px] overflow-y-auto">
+                    <div className="whitespace-pre-wrap min-h-[150px] max-h-[500px] overflow-y-auto pr-2">
                         {script.length === 0 ? (
                             <span className="text-muted-foreground/50">
                                 Enhanced version will appear here...
                             </span>
                         ) : (
-                            script
+                            <>
+                                {script}
+                                <div ref={scriptEndRef} />
+                            </>
                         )}
                     </div>
                 </CardContent>

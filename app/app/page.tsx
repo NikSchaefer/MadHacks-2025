@@ -18,7 +18,6 @@ import Image from "next/image";
 
 export default function Home() {
     const [controller] = useState(() => new AudioController(DEFAULT_CONFIG));
-    const [isListening, setIsListening] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [statusMessage, setStatusMessage] = useState("");
     const [transcript, setTranscript] = useState("");
@@ -31,29 +30,34 @@ export default function Home() {
     }, [slideshowFile]);
 
     const [confettiEnabled, setConfettiEnabled] = useState(true);
+    const [isListening, setIsListening] = useState(false);
 
     // Poll for transcript and script updates
     useEffect(() => {
         const interval = setInterval(() => {
             setTranscript(controller.getFullTranscript());
             setScript(controller.getFullScript());
+            setIsListening(controller.getIsRecording());
         }, 100); // Update every 100ms
 
         return () => clearInterval(interval);
     }, [controller]);
 
     function toggleListening() {
-        if (isListening) {
+        // If processing demo, stop it
+        // We need a way to check if processing file, but controller handles stopRecording smartly now
+        if (
+            isListening ||
+            (controller.getIsProcessingFile && controller.getIsProcessingFile())
+        ) {
             controller.stopRecording();
-            setIsListening(false);
+            // We don't strictly set isListening false here because controller state might lag slightly
+            // but UI updates via poll. However, for immediate feedback:
             setStatusMessage("Stopped");
-
             explodeConfetti();
-
             return;
         }
         controller.startRecording();
-        setIsListening(true);
         setStatusMessage("Listening...");
     }
 
@@ -80,6 +84,15 @@ export default function Home() {
         });
     }
 
+    function handleReset() {
+        controller.reset();
+        setTranscript("");
+        setScript("");
+        setStatusMessage("");
+    }
+
+    // const isListening = controller.getIsRecording(); // Moved to state for smoother UI
+
     // --- Conditional layout ---
     if (!slideshowFile) {
         // Centered single column layout
@@ -94,6 +107,7 @@ export default function Home() {
                         isUploading={isUploading}
                         onToggleListening={toggleListening}
                         onUploadSlideshow={uploadSlideshow}
+                        onReset={handleReset}
                     />
 
                     <StatusIndicator
@@ -150,6 +164,7 @@ export default function Home() {
                         script={script}
                         onToggleListening={toggleListening}
                         onUploadSlideshow={uploadSlideshow}
+                        onReset={handleReset}
                     />
 
                     {/* Slideshow */}
