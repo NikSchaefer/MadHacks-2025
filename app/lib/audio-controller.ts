@@ -115,7 +115,8 @@ export class AudioController {
             const arrayBuffer = await file.arrayBuffer();
             // Create offline context or standard context to decode
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+            const audioContext = new (window.AudioContext ||
+                (window as any).webkitAudioContext)();
             const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
             // Chunk duration in seconds

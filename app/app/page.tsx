@@ -10,6 +10,7 @@ import { StatusIndicator } from "@/components/StatusIndicator";
 import { TranscriptCards } from "@/components/TranscriptCards";
 import { SlideshowSidebar } from "@/components/SlideshowSidebar";
 import { ConfettiToggle } from "@/components/ConfettiToggle";
+import { WaveBackground } from "@/components/WaveBackground";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
@@ -82,7 +83,7 @@ export default function Home() {
         // Centered single column layout
         return (
             <div className="min-h-screen flex flex-col items-center justify-center pt-24">
-                <div className="max-w-6xl w-full space-y-8">
+                <div className="max-w-6xl w-full space-y-8 relative z-50">
                     <Header />
 
                     <ControlPanel
@@ -113,27 +114,13 @@ export default function Home() {
                     enabled={confettiEnabled}
                     onToggle={setConfettiEnabled}
                 />
-                <div className="w-full h-1/2">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 1440 320"
-                    >
-                        <path
-                            fill="#1447E6"
-                            fillOpacity="1"
-                            d="M0,128L60,106.7C120,85,240,43,360,37.3C480,32,600,64,720,90.7C840,117,960,139,1080,128C1200,117,1320,75,1380,53.3L1440,32L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
-                        ></path>
-                    </svg>
-                </div>
-                <div className="w-full text-center py-6 text-sm text-muted-foreground">
-                    <a href="https://github.com/NikSchaefer/MadHacks-2025" className="text-blue-500">Made with ❤️ in 24 hours @ MadHacks, 2025 By Nik, Ben, Henry, and Eric</a>
-                </div>
+                <WaveBackground />
             </div>
         );
     } else {
         // Two column layout with slideshow on right
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-8">
+            <div className="min-h-screen flex flex-col items-center justify-center">
                 <input
                     type="file"
                     accept=".pdf"
@@ -142,7 +129,7 @@ export default function Home() {
                     onChange={handleFileChange}
                 />
 
-                <div className="w-full space-y-8 flex gap-6">
+                <div className="w-full space-y-8 flex gap-6 p-8 relative z-50">
                     <SlideshowSidebar
                         controller={controller}
                         isListening={isListening}
@@ -177,9 +164,7 @@ export default function Home() {
                         onCheckedChange={setConfettiEnabled}
                     />
                 </div>
-                <div className="w-full text-center py-6 text-sm text-muted-foreground">
-                    <a href="https://github.com/NikSchaefer/MadHacks-2025" className="text-blue-500">Made with ❤️ in 24 hours @ MadHacks, 2025 By Nik, Ben, Henry, and Eric</a>
-                </div>
+                <WaveBackground />
             </div>
         );
     }

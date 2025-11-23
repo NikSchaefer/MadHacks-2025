@@ -42,36 +42,48 @@ export function SlideshowSidebar({
             </div>
 
             {/* Control Buttons */}
-            <div className="flex justify-left gap-4">
+            <div className="flex flex-col gap-4 w-full">
+                <div className="flex gap-4 w-full">
+                    <Select onValueChange={controller.setPersona}>
+                        <SelectTrigger className="h-12! text-lg flex-1">
+                            <SelectValue placeholder="Select Voice" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {VOICES.map((voice) => (
+                                <SelectItem key={voice.id} value={voice.id}>
+                                    {voice.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <Button
+                        onClick={onUploadSlideshow}
+                        size="lg"
+                        variant={isUploading ? "secondary" : "outline"}
+                        className="h-12 px-6 text-lg flex-1"
+                    >
+                        📁 {isUploading ? "Slides Uploaded" : "Upload Slides"}
+                    </Button>
+                </div>
+
                 <Button
                     onClick={onToggleListening}
                     size="lg"
                     variant={isListening ? "destructive" : "default"}
-                    className="text-lg w-1/9 px-7 py-6"
+                    className="w-full h-16 text-xl shadow-md transition-all hover:shadow-lg"
                 >
-                    {isListening ? "⏹" : "👂"}
+                    {isListening ? (
+                        <span className="flex items-center gap-2">
+                            <span className="animate-pulse">●</span> Stop
+                            Recording
+                        </span>
+                    ) : (
+                        <span className="flex items-center gap-2">
+                            🎤 Start Lecture Translation
+                        </span>
+                    )}
                 </Button>
-
-                <Button
-                    onClick={onUploadSlideshow}
-                    size="lg"
-                    variant={isUploading ? "destructive" : "default"}
-                    className="text-lg w-1/3 px-8 py-6"
-                >
-                    📁 Upload file
-                </Button>
-                <Select onValueChange={controller.setPersona}>
-                    <SelectTrigger className="text-lg w-1/2 px-8 py-6">
-                        <SelectValue placeholder="Voice" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {VOICES.map((voice) => (
-                            <SelectItem key={voice.id} value={voice.id}>
-                                {voice.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
             </div>
 
             {/* Status Indicator */}
@@ -129,4 +141,3 @@ export function SlideshowSidebar({
         </div>
     );
 }
-
