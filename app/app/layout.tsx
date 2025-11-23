@@ -9,8 +9,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
     title: {
-        default: "MadHacks 2025",
-        template: "%s | MadHacks 2025",
+        default: "MadLectures - MadHacks 2025",
+        template: "%s | MadLectures - MadHacks 2025",
     },
     description:
         "Real-time AI Audio Assistant for presentations and transcription.",

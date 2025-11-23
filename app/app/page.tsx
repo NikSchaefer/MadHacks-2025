@@ -11,8 +11,6 @@ import { TranscriptCards } from "@/components/TranscriptCards";
 import { SlideshowSidebar } from "@/components/SlideshowSidebar";
 import { ConfettiToggle } from "@/components/ConfettiToggle";
 import { WaveBackground } from "@/components/WaveBackground";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 
 import Image from "next/image";
 
