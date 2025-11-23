@@ -15,7 +15,7 @@ export async function textToScript({
     }
 
     const result = await generateText({
-        model: google("gemini-2.5-flash"),
+        model: google("gemini-2.5-flash-lite"),
         prompt: `You are a real-time lecture enhancement AI. You're processing a LIVE lecture stream, continuously transforming raw transcription into polished educational content that flows naturally as one continuous narrative.
 
 CURRENT STATE:

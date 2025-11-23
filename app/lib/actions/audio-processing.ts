@@ -15,9 +15,9 @@ export async function processAudioToText(formData: FormData) {
             throw new Error("No audio file provided");
         }
 
-        const result = await speechToText(audioFile);
+        const text = await speechToText(audioFile);
 
-        return { success: true, text: result.text };
+        return { success: true, text };
     } catch (error) {
         console.error("Error in processAudioToText:", error);
         const errorMessage =
@@ -102,8 +102,15 @@ export async function processFullPipeline(formData: FormData) {
             return { success: false, error: audioResult.error };
         }
         const { text } = audioResult;
-        if (!text) {
-            return { success: false, error: "No text provided" };
+        if (!text || text.trim() === "") {
+            console.log("No text detected in audio, skipping pipeline");
+            return {
+                success: true,
+                originalText: "",
+                enhancedText: "",
+                audioBase64: "",
+                skipped: true,
+            };
         }
         console.log(`Step 1 completed in ${Date.now() - startTime}ms`);
 
@@ -118,6 +125,7 @@ export async function processFullPipeline(formData: FormData) {
         if (!enhancedText) {
             return { success: false, error: "No enhanced text provided" };
         }
+        console.log(`Step 2 completed in ${Date.now() - startTime}ms`);
 
         // Step 3: Enhanced Script → Speech
         console.log("Step 3: Enhanced Script → Speech");
@@ -126,7 +134,6 @@ export async function processFullPipeline(formData: FormData) {
             console.error("Step 3 failed:", speechResult.error);
             return { success: false, error: speechResult.error };
         }
-
         console.log(`Step 3 completed in ${Date.now() - startTime}ms`);
 
         return {
