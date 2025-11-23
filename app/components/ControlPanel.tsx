@@ -24,6 +24,18 @@ export function ControlPanel({
     onToggleListening,
     onUploadSlideshow,
 }: ControlPanelProps) {
+    async function useDemoLecture() {
+        try {
+            const response = await fetch("/florian1.mp3");
+            const blob = await response.blob();
+            const file = new File([blob], "florian1.mp3", {
+                type: "audio/mpeg",
+            });
+            controller.processFile(file);
+        } catch (error) {
+            console.error("Failed to load demo lecture:", error);
+        }
+    }
     return (
         <div className="flex flex-col items-center gap-4 max-w-2xl mx-auto w-full">
             <div className="flex gap-4 w-full">
@@ -71,6 +83,7 @@ export function ControlPanel({
                 variant="ghost"
                 size="sm"
                 className="text-muted-foreground text-xs hover:bg-transparent hover:text-foreground"
+                onClick={useDemoLecture}
             >
                 (Or use our demo lecture to get started)
             </Button>
