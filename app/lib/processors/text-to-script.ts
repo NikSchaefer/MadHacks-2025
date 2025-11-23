@@ -30,23 +30,14 @@ export async function textToScript({
 
     const result = await generateText({
         model: google("gemini-2.5-flash-lite"),
-        prompt: `${systemPersona} Polish the following lecture script to be as concise and clear as possible, so that the average 
-        college student can understand it. Limit the response to single sentences. 
-        
-        Avoid the following:
-            Tying back to a previous concept. Keep the lecture flowing forward. 
-            Repeating/rephrasing concepts that were already covered. 
-            Using abbreviations or other terms for concepts being covered. 
-            
-        Return ONLY the next portion that is created of the script upon each prompt, you do not need to return the whole script every single time.
+        prompt: `${systemPersona} Reword this lecture script to be concise, by trying not to repeat yourself. Use transition words between topics. Limit responses to 1 sentence.  
 
-CURRENT STATE:
-Previous script (already transcribed text): 
+Our already transcribed text to be appended: 
 """
 ${previousScript}
 """
 
-NEW RAW TRANSCRIPTION (new text to transcribe):
+New text to transcribe and then append:
 """
 ${newText}
 """
