@@ -113,7 +113,7 @@ export default function Home() {
                     enabled={confettiEnabled}
                     onToggle={setConfettiEnabled}
                 />
-                <div className="w-full h-1/2">
+                <div className="w-full h-1/2 relative">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 1440 320"
@@ -124,9 +124,9 @@ export default function Home() {
                             d="M0,128L60,106.7C120,85,240,43,360,37.3C480,32,600,64,720,90.7C840,117,960,139,1080,128C1200,117,1320,75,1380,53.3L1440,32L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
                         ></path>
                     </svg>
-                </div>
-                <div className="w-full text-center py-6 text-sm text-muted-foreground">
-                    <a href="https://github.com/NikSchaefer/MadHacks-2025" className="text-blue-500">Made with ❤️ in 24 hours @ MadHacks, 2025 By Nik, Ben, Henry, and Eric</a>
+                    <div className="absolute bottom-0 left-0 w-full text-center py-6">
+                        <a href="https://github.com/NikSchaefer/MadHacks-2025" className="text-blue-200">Made with ❤️ in 24 hours @ MadHacks, 2025 By Nik, Ben, Henry, and Eric</a>
+                    </div>
                 </div>
             </div>
         );
@@ -177,7 +177,7 @@ export default function Home() {
                         onCheckedChange={setConfettiEnabled}
                     />
                 </div>
-                <div className="w-full text-center py-6 text-sm text-muted-foreground">
+                <div className="w-full text-center py-6 text-muted-foreground">
                     <a href="https://github.com/NikSchaefer/MadHacks-2025" className="text-blue-500">Made with ❤️ in 24 hours @ MadHacks, 2025 By Nik, Ben, Henry, and Eric</a>
                 </div>
             </div>
