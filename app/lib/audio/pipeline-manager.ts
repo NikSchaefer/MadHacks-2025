@@ -30,6 +30,7 @@ export class AudioPipelineManager {
     // Processing State
     private isProcessingScripts: boolean = false;
     private isGeneratingSpeech: boolean = false;
+    private activeSTTRequests: number = 0;
 
     // Callbacks
     private onMetric: (metric: ProcessingMetric) => void;
@@ -85,7 +86,18 @@ export class AudioPipelineManager {
         return this.transcriptQueue.length + this.enhanceQueue.length;
     }
 
+    public isBusy() {
+        return (
+            this.activeSTTRequests > 0 ||
+            this.transcriptQueue.length > 0 ||
+            this.enhanceQueue.length > 0 ||
+            this.isProcessingScripts ||
+            this.isGeneratingSpeech
+        );
+    }
+
     public async processRecordedAudio(blob: Blob, id: string) {
+        this.activeSTTRequests++;
         const startTime = Date.now();
         this.onLog(`🎤 Chunk ${id}: Processing STT...`);
 
@@ -115,6 +127,8 @@ export class AudioPipelineManager {
             }
         } catch (err) {
             console.error(`Error in STT for chunk ${id}:`, err);
+        } finally {
+            this.activeSTTRequests--;
         }
     }
 

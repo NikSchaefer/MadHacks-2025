@@ -46,17 +46,18 @@ export function ControlPanel({
     }, [controller, isProcessingDemo]);
 
     async function useDemoLecture() {
+        const DEMO_FILE = "/physics2.mp3";
         try {
-            controller.markDemoMode?.(); 
+            controller.markDemoMode?.();
             setIsProcessingDemo(true);
-            const response = await fetch("/florian2.mp3");
+            const response = await fetch(DEMO_FILE);
             const blob = await response.blob();
 
             const demoChunk: SpeechChunk = {
-                id: "demo", 
-                speechData: blob, 
+                id: "demo",
+                speechData: blob,
                 timestamp: Date.now(),
-                duration: 0,         
+                duration: 0,
                 status: "pending"
             };
             controller.player.addChunk(demoChunk);
