@@ -55,3 +55,12 @@ export interface AppState {
     config: AudioConfig;
     error?: string;
 }
+
+export interface ProcessingMetric {
+    id: string;
+    step: string;
+    duration: number;
+    timestamp: number;
+    details?: string;
+    error?: boolean;
+}
