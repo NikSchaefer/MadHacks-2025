@@ -15,9 +15,6 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DEFAULT_CONFIG } from "@/lib/config";
 
-
-// import { useState, useEffect, useRef, useMemo } from "react"; // <--- Add useMemo
-
 const VOICES = [
     { id: "54e3a85ac9594ffa83264b8a494b901b", name: "SpongeBob" },
     { id: "933563129e564b19a115bedd57b7406a", name: "Sarah" },
@@ -27,7 +24,6 @@ const VOICES = [
     { id: "0b2e96151d67433d93891f15efc25dbd", name: "Trap-A-Holics" },
     { id: "acc8237220d8470985ec9be6c4c480a9", name: "Hatsune Miku" },
 ];
-
 
 export default function Home() {
     const [controller] = useState(() => new AudioController(DEFAULT_CONFIG));
@@ -44,11 +40,12 @@ export default function Home() {
         return URL.createObjectURL(slideshowFile);
     }, [slideshowFile]);
 
+    // Poll for transcript and script updates
     useEffect(() => {
         const interval = setInterval(() => {
             setTranscript(controller.getFullTranscript());
             setScript(controller.getFullScript());
-        }, 100);
+        }, 100); // Update every 100ms
 
         return () => clearInterval(interval);
     }, [controller]);
@@ -66,13 +63,15 @@ export default function Home() {
     }
 
     function uploadSlideshow() {
-        if (fileInputRef.current) fileInputRef.current.click();
+        if (fileInputRef.current) {
+            fileInputRef.current.click(); // open file dialog
+        }
     }
 
     function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
         if (!file) return;
-        setSlideshowFile(file);
+        setSlideshowFile(file); // store uploaded file
         setIsUploading(true);
         setStatusMessage(`Selected file: ${file.name}`);
     }
@@ -88,7 +87,7 @@ export default function Home() {
         //centered single column layout
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-8">
-               
+
                 <div className="max-w-6xl w-full space-y-8">
                     {/* Header */}
                     <div className="text-center space-y-2">
@@ -145,49 +144,52 @@ export default function Home() {
                         </div>
                     )}
 
-                    {/* Original & Translated Text */}
-                    <div className="grid md:grid-cols-2 gap-6">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Original Lecture</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-muted-foreground whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-y-auto">
-                                    {transcript.length === 0 ? (
-                                        <span className="text-muted-foreground/50">Waiting for audio...</span>
-                                    ) : (
-                                        transcript
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
+                    {/* Original Text */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Original Lecture</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-muted-foreground whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-y-auto">
+                                {transcript.length === 0 ? (
+                                    <span className="text-muted-foreground/50">
+                                        Waiting for audio...
+                                    </span>
+                                ) : (
+                                    transcript
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                        <Card className="border-primary/20 bg-primary/5">
-                            <CardHeader>
-                                <CardTitle className="text-primary">AI Enhanced Lecture</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-y-auto">
-                                    {script.length === 0 ? (
-                                        <span className="text-muted-foreground/50">
-                                            Enhanced version will appear here...
-                                        </span>
-                                    ) : (
-                                        script
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    <input
-                        type="file"
-                        accept=".pdf"
-                        ref={fileInputRef}
-                        className="hidden"
-                        onChange={handleFileChange}
-                    />
+                    {/* Translated Text */}
+                    <Card className="border-primary/20 bg-primary/5">
+                        <CardHeader>
+                            <CardTitle className="text-primary">
+                                AI Enhanced Lecture
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="whitespace-pre-wrap min-h-[300px] max-h-[500px] overflow-y-auto">
+                                {script.length === 0 ? (
+                                    <span className="text-muted-foreground/50">
+                                        Enhanced version will appear here...
+                                    </span>
+                                ) : (
+                                    script
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
+
+                <input
+                    type="file"
+                    accept=".pdf"
+                    ref={fileInputRef}
+                    className="hidden"
+                    onChange={handleFileChange}
+                />
             </div>
         );
     } else {

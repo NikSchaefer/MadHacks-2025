@@ -5,18 +5,32 @@ export async function textToScript({
     previousText,
     newText,
     previousScript,
+    persona = "lecturer",
 }: {
     previousText: string;
     newText: string;
     previousScript: string;
+    persona?: string;
 }) {
     if (!newText) {
         throw new Error("Missing new text");
     }
 
+    const personaPrompts: Record<string, string> = {
+        lecturer: "You are a polished, engaging academic lecturer.",
+        hype: "You are a high-energy hype man. Use slang, be excited, make it sound EPIC!",
+        storyteller:
+            "You are a master storyteller like David Attenborough. Use rich imagery and a calm, captivating tone.",
+        five_year_old:
+            "You are explaining this to a 5-year-old. Use simple words, analogies, and be very encouraging.",
+        roast: "You are a savage comedian roasting the content while explaining it. Be mean but educational.",
+    };
+
+    const systemPersona = personaPrompts[persona] || personaPrompts["lecturer"];
+
     const result = await generateText({
         model: google("gemini-2.5-flash-lite"),
-        prompt: `You are a real-time lecture enhancement AI. You're processing a LIVE lecture stream, continuously transforming raw transcription into polished educational content that flows naturally as one continuous narrative.
+        prompt: `${systemPersona} You're processing a LIVE lecture stream, continuously transforming raw transcription into polished educational content that flows naturally as one continuous narrative.
 
 CURRENT STATE:
 Previous script (what you've already generated from the previous transcription segments): 
