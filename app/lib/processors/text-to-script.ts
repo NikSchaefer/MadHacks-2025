@@ -53,10 +53,10 @@ ${newText || "[No new text]"}
 INSTRUCTIONS:
 - Output ONLY the new polished segment that continues from the previous script.
 - **IMPORTANT**: Check the "NEW INPUT" against "CONTEXT - Raw text". If the new input overlaps with what was already processed, IGNORE the overlapping part.
-- **CRITICAL**: Check the "CONTEXT - Generated script". DO NOT repeat any information, phrases, or topics that are already in the generated script.
+- **CRITICAL**: Check the "CONTEXT - Generated script". DO NOT repeat any information, phrases, or topics that are already in the generated script. Exercise this relatively often to ensure the intention of the speaker is not lost.
 - Fix grammar, remove repetition, and clarify muddled sentences to make them more explanatory.
 - NEVER USE ASTERISKS or BACKTICKS. They can't be spoken by the voice very well
-- Maintain the speaker's original intent and narrative flow. Do not summarize; rewrite it as a better version of the speech.
+- Maintain the speaker's original intent and narrative flow. Do not summarize; rewrite it as a better version of the speech. Do not get too far ahead of the lecture.
 - Use natural connections between ideas instead of heavy-handed transition words like "Furthermore" or "Indeed".
 - If the raw text is fragmented, reconstruct it into complete, logical sentences.
 - Keep the tone engaging and professional.

@@ -2,7 +2,7 @@
 
 ### _Transforming bad lectures into great ones, in real-time._
 
-MadLectures listens to your lecture, uses Gemini AI to extract the good stuff, and speak it back to you using Fish Audio like in the quality of a ted talk.
+MadLectures listens to your lecture, uses Gemini AI to extract the good stuff, and speak it back to you using Fish Audio to make your professor into the quality of a TED talk.
 
 ---
 
