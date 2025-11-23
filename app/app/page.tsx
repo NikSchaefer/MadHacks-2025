@@ -6,6 +6,8 @@ import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DEFAULT_CONFIG } from "@/lib/config";
 
+
+
 export default function Home() {
     const [controller] = useState(() => new AudioController(DEFAULT_CONFIG));
     const [isListening, setIsListening] = useState(false);
@@ -15,6 +17,7 @@ export default function Home() {
     const [script, setScript] = useState("");
     const [slideshowFile, setSlideshowFile] = useState<File | null>(null); // store file
     const fileInputRef = useRef<HTMLInputElement>(null); // ref for hidden input
+
 
     // Poll for transcript and script updates
     useEffect(() => {
