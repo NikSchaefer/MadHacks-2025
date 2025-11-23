@@ -16,7 +16,7 @@ export class AudioPlayerManager {
         this.hasDemoFaded = false;
     }
 
-    private readonly fadeSeconds = 5;
+    private readonly fadeSeconds = 1.5;
 
     addChunk(chunk: SpeechChunk) {
         this.speechBuffer.push(chunk);
@@ -63,8 +63,11 @@ export class AudioPlayerManager {
         this.currentGain.gain.setValueAtTime(this.currentGain.gain.value, now);
         this.currentGain.gain.linearRampToValueAtTime(0, now + this.fadeSeconds);
 
-        // Do not stop the source immediately — let it fade naturally
+        if (this.currentSource) {
+            this.currentSource.stop(now + this.fadeSeconds); // schedule stop after fade
+        }
 
+        // Do not stop the source immediately — let it fade naturally
         // If next chunk is provided, play it at gain 0 and fade in
         if (nextChunk) {
             const arrayBuffer = await nextChunk.speechData.arrayBuffer();
