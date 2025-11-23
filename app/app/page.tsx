@@ -356,6 +356,16 @@ export default function Home() {
                         />
                     </div>
                 </div>
+                <div className="absolute top-2 right-2 flex items-center gap-1">
+                    <Label htmlFor="confetti-switch" className="text-sm font-medium">
+                        🎉
+                    </Label>
+                    <Switch
+                        id="confetti-switch"
+                        checked={confettiEnabled}
+                        onCheckedChange={setConfettiEnabled}
+                    />
+                </div>
             </div>
         );
     }
