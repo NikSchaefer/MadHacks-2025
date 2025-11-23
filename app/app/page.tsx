@@ -10,6 +10,8 @@ import { StatusIndicator } from "@/components/StatusIndicator";
 import { TranscriptCards } from "@/components/TranscriptCards";
 import { SlideshowSidebar } from "@/components/SlideshowSidebar";
 import { ConfettiToggle } from "@/components/ConfettiToggle";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 export default function Home() {
     const [controller] = useState(() => new AudioController(DEFAULT_CONFIG));
@@ -160,7 +162,10 @@ export default function Home() {
                     </div>
                 </div>
                 <div className="absolute top-2 right-2 flex items-center gap-1">
-                    <Label htmlFor="confetti-switch" className="text-sm font-medium">
+                    <Label
+                        htmlFor="confetti-switch"
+                        className="text-sm font-medium"
+                    >
                         🎉
                     </Label>
                     <Switch
