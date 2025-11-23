@@ -1,11 +1,12 @@
 import { generateText } from "ai";
 import { google } from "@ai-sdk/google";
+import { getVoicePrompt } from "@/data/voices";
 
 export async function textToScript({
     previousText,
     newText,
     previousScript,
-    persona = "lecturer",
+    persona = "933563129e564b19a115bedd57b7406a", // Default to Sarah
 }: {
     previousText: string;
     newText: string;
@@ -16,17 +17,7 @@ export async function textToScript({
         throw new Error("Missing new text");
     }
 
-    const personaPrompts: Record<string, string> = {
-        lecturer: "You are a professor in Computer Science.",
-        hype: "You are a high-energy hype man. Use slang, be excited, make it sound EPIC!",
-        storyteller:
-            "You are a master storyteller like David Attenborough. Use rich imagery and a calm, captivating tone.",
-        five_year_old:
-            "You are explaining this to a 5-year-old. Use simple words, analogies, and be very encouraging.",
-        roast: "You are a savage comedian roasting the content while explaining it. Be mean but educational.",
-    };
-
-    const systemPersona = personaPrompts[persona] || personaPrompts["lecturer"];
+    const systemPersona = getVoicePrompt(persona);
 
     const result = await generateText({
         model: google("gemini-2.5-flash-lite"),
@@ -47,8 +38,6 @@ ${newText}
     return result.text;
 }
 
-
-
 // RECENT RAW CONTEXT (for reference only):
 // """
 // ${previousText || "[No previous context]"}
@@ -68,7 +57,7 @@ ${newText}
 // 7. **CONSISTENT VOICE**: Match the tone, style, and first-person perspective of previous script
 // 8. **NO META-TEXT**: Don't add "[continuing...]", "[new topic]", or any formatting - just the lecture content
 
-// CRITICAL: 
+// CRITICAL:
 // - Output ONLY the new polished segment that continues from previousScript
 // - Do NOT repeat or rewrite previousScript
 // - Do NOT summarize what came before
@@ -76,4 +65,3 @@ ${newText}
 // - Keep pacing similar to original (don't over-compress or over-expand)
 
 // Return the next segment of polished lecture script:`,
-    

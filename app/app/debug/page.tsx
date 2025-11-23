@@ -2,8 +2,16 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { AudioController } from "@/lib/audio-controller";
 import { DEFAULT_CONFIG } from "@/lib/config";
+import { VOICES } from "@/data/voices";
 import { ProcessingMetric } from "@/lib/types";
 import { useEffect, useState } from "react";
 
@@ -47,6 +55,18 @@ export default function DebugPage() {
                 <div className="flex justify-between items-center">
                     <h1 className="text-3xl font-bold">Pipeline Debugger</h1>
                     <div className="flex gap-2">
+                        <Select onValueChange={(val) => controller.setPersona(val)}>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Select Voice" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {VOICES.map((voice) => (
+                                    <SelectItem key={voice.id} value={voice.id}>
+                                        {voice.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                         <div className="relative">
                             <input
                                 type="file"

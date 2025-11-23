@@ -5,15 +5,13 @@ import { textToSpeech } from "../processors/text-to-speech";
 /**
  * Server Action: Convert enhanced text to speech
  */
-export async function processTextToSpeech(text: string) {
+export async function processTextToSpeech(text: string, voiceId: string) {
     try {
         if (!text) {
             throw new Error("No text provided");
         }
 
-        console.log("Converting text to speech (length:", text.length, ")");
-
-        const audioBuffer = await textToSpeech(text);
+        const audioBuffer = await textToSpeech(text, voiceId);
 
         console.log(
             "Generated audio buffer (size:",
@@ -34,4 +32,3 @@ export async function processTextToSpeech(text: string) {
         return { success: false, error: errorMessage };
     }
 }
-
