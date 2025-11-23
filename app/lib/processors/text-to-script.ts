@@ -21,7 +21,7 @@ export async function textToScript({
 
     const result = await generateText({
         model: google("gemini-2.5-flash-lite"),
-        prompt: `${systemPersona} Reword this lecture script to be concise, by trying not to repeat yourself. Use transition words between topics. Limit responses to 1 sentence.  
+        prompt: `You are a college professor. reword this lecture script to be concise, by trying not to repeat yourself. Use transition words between topics. Limit responses to 1 sentence.  
 
 Our already transcribed text to be appended: 
 """
